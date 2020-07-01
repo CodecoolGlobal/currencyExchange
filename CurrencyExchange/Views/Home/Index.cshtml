@@ -2,14 +2,25 @@
     ViewData["Title"] = "Home Page";
 }
 
-@model CurrencyExchange.Models.Conversion;
 
 <div class="text-center">
     <h2>
-        Welcome to Currency Exchange! 
+        Welcome to Currency Exchange!
     </h2>
 
     <p>
         On this site you can view exchange rates, convert money, follow different currencies and get notified if the rate is below/above desired value.
+    </p>
+
+    @*grafikon*@
+
+    @foreach (var item in ViewBag.Rates)
+    {
+        <p>
+            @String.Format("{0:0.##}", item.Value[ViewBag.EndCurrency])
+        </p>
+    }
+    <p>
+        The fluctuation of @ViewBag.BaseCurrency compared to @ViewBag.EndCurrency between @ViewBag.StartDate and @ViewBag.EndDate
     </p>
 </div>
