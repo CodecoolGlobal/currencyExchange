@@ -7,6 +7,8 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
 using CurrencyExchange.Models;
 using RestSharp;
+using RestSharp.Serialization.Json;
+using Newtonsoft.Json;
 
 namespace CurrencyExchange.Controllers
 {
@@ -24,7 +26,6 @@ namespace CurrencyExchange.Controllers
             return View();
         }
 
-
         public IActionResult Privacy()
         {
             return View();
@@ -38,17 +39,37 @@ namespace CurrencyExchange.Controllers
         [HttpPost]
         public IActionResult ExchangeRate(Conversion conversion)
         {
-            var client = new RestClient($"https://api.exchangeratesapi.io/latest?base={conversion.BaseCurrency}&symbols={conversion.EndCurrency}");
-            var request = new RestRequest(Method.GET);
-            IRestResponse response = client.Execute(request);
-            ViewBag.Response = response.Content;
+            ViewBag.Response = GetRate(conversion);
             return View();
+        }
+
+        public IActionResult ConvertMoney()
+        {
+            return View();
+        }
+
+        [HttpPost]
+        public IActionResult ConvertMoney(Conversion conversion)
+        {
+            ViewBag.Response = GetRate(conversion) * conversion.Amount;
+            return View(conversion);
         }
 
         [ResponseCache(Duration = 0, Location = ResponseCacheLocation.None, NoStore = true)]
         public IActionResult Error()
         {
             return View(new ErrorViewModel { RequestId = Activity.Current?.Id ?? HttpContext.TraceIdentifier });
+        }
+
+        private decimal GetRate(Conversion conversion)
+        {
+            var client = new RestClient($"https://api.exchangeratesapi.io/latest?base={conversion.BaseCurrency}&symbols={conversion.EndCurrency}");
+            var request = new RestRequest(Method.GET);
+            IRestResponse response = client.Execute(request);
+            JsonObject deserializedResponse = JsonConvert.DeserializeObject<JsonObject>(response.Content);
+            JsonObject deserializedRates = JsonConvert.DeserializeObject<JsonObject>(deserializedResponse["rates"].ToString());
+            decimal rate = Convert.ToDecimal(deserializedRates[conversion.EndCurrency]);
+            return decimal.Round(rate, 3);
         }
     }
 }

@@ -1,0 +1,25 @@
+﻿@{
+    ViewData["Title"] = "Convert Money";
+}
+
+@model CurrencyExchange.Models.Conversion;
+
+<div class="text-center">
+    <form asp-action="ConvertMoney" method="post">
+        <p>
+            <label>Convert</label>
+            <input asp-for="Amount" placeholder="Amount"/>
+            <input asp-for="BaseCurrency" placeholder="Currency"/>
+            <label>To</label>
+            <input asp-for="EndCurrency" />
+        </p>
+        <input type="submit" value="Convert" />
+    </form>
+
+    @if(ViewBag.Response != null)
+    {
+        <h3>
+            @Model.Amount @Model.BaseCurrency = @ViewBag.Response @Model.EndCurrency
+        </h3>
+    }
+</div>
