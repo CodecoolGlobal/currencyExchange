@@ -8,10 +8,20 @@
     <form asp-action="ConvertMoney" method="post">
         <p>
             <label>Convert</label>
-            <input asp-for="Amount" placeholder="Amount"/>
-            <input asp-for="BaseCurrency" placeholder="Currency"/>
+            <input asp-for="Amount" placeholder="Amount" />
+            <select asp-for="BaseCurrency">
+                @foreach (var value in @ViewBag.Currencies)
+                {
+                    <option value="@value">@value</option>
+                }
+            </select>
             <label>To</label>
-            <input asp-for="EndCurrency" />
+            <select asp-for="EndCurrency">
+                @foreach (var value in @ViewBag.Currencies)
+                {
+                    <option value="@value">@value</option>
+                }
+            </select>
         </p>
         <input type="submit" value="Convert" />
     </form>
