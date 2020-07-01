@@ -23,6 +23,30 @@ namespace CurrencyExchange.Controllers
 
         public IActionResult Index()
         {
+            DateTime startDate = GetRandomDate();
+            DateTime endDate = GetRandomDate();
+            while (startDate > endDate)
+            {
+                endDate = GetRandomDate();
+            }
+            string strStartDate = startDate.ToString("yyyy-MM-dd");
+            string strEndDate = endDate.ToString("yyyy-MM-dd");
+            string baseCurrency = "USD";
+            string endCurrency = "HUF";
+
+            var client = new RestClient($"https://api.exchangeratesapi.io/history?start_at={strStartDate}&end_at={strEndDate}&base={baseCurrency}&symbols={endCurrency}");
+            var request = new RestRequest(Method.GET);
+            IRestResponse response = client.Execute(request);
+
+            JsonObject deserializedResponse = JsonConvert.DeserializeObject<JsonObject>(response.Content);
+            JsonObject deserializedRates = JsonConvert.DeserializeObject<JsonObject>(deserializedResponse["rates"].ToString());
+            var sortedRatesByDate = deserializedRates.OrderBy(d => d.Key).ToList();
+
+            ViewBag.Rates = sortedRatesByDate;
+            ViewBag.StartDate = strStartDate;
+            ViewBag.EndDate = strEndDate;
+            ViewBag.BaseCurrency = baseCurrency;
+            ViewBag.EndCurrency = endCurrency;
             return View();
         }
 
@@ -70,6 +94,20 @@ namespace CurrencyExchange.Controllers
             JsonObject deserializedRates = JsonConvert.DeserializeObject<JsonObject>(deserializedResponse["rates"].ToString());
             decimal rate = Convert.ToDecimal(deserializedRates[conversion.EndCurrency]);
             return decimal.Round(rate, 3);
+        }
+
+        private DateTime GetRandomDate()
+        {
+            Random random = new Random();
+            DateTime start = new DateTime(2000, 01, 01);
+            int range = (DateTime.Today - start).Days;
+            return start.AddDays(random.Next(range));
+        }
+
+        private string GetRandomCurrency()
+        {
+            Random random = new Random();
+            return "USD";
         }
     }
 }
