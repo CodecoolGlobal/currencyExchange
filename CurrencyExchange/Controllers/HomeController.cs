@@ -6,6 +6,7 @@ using System.Threading.Tasks;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
 using CurrencyExchange.Models;
+using RestSharp;
 
 namespace CurrencyExchange.Controllers
 {
@@ -23,8 +24,24 @@ namespace CurrencyExchange.Controllers
             return View();
         }
 
+
         public IActionResult Privacy()
         {
+            return View();
+        }
+
+        public IActionResult ExchangeRate()
+        {
+            return View();
+        }
+
+        [HttpPost]
+        public IActionResult ExchangeRate(Conversion conversion)
+        {
+            var client = new RestClient($"https://api.exchangeratesapi.io/latest?base={conversion.BaseCurrency}&symbols={conversion.EndCurrency}");
+            var request = new RestRequest(Method.GET);
+            IRestResponse response = client.Execute(request);
+            ViewBag.Response = response.Content;
             return View();
         }
 
