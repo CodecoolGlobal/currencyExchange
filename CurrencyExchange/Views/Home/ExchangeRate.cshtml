@@ -2,7 +2,8 @@
     ViewData["Title"] = "Exchange Rate";
 }
 
-@model CurrencyExchange.Models.Conversion;
+
+@model CurrencyExchange.Models.Conversion
 
 <div class="text-center">
     @if (ViewBag.Response != null)
@@ -22,11 +23,21 @@
             </p>*@
         <p>
             <label>Base Currency</label>
-            <input asp-for="BaseCurrency" />
+            <select asp-for="BaseCurrency">
+                @foreach (var value in @ViewBag.Currencies)
+                {
+                    <option value="@value">@value</option>
+                }
+            </select>
         </p>
         <p>
             <label>End Currency</label>
-            <input asp-for="EndCurrency" />
+            <select asp-for="EndCurrency">
+                @foreach (var value in @ViewBag.Currencies)
+                {
+                    <option value="@value">@value</option>
+                }
+            </select>
         </p>
         <input type="submit" value="send" />
     </form>
