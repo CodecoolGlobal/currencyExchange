@@ -5,9 +5,12 @@
 @model CurrencyExchange.Models.Conversion;
 
 <div class="text-center">
-    <p>
-        @ViewBag.Response
-    </p>
+    @if (ViewBag.Response != null)
+    {
+        <p>
+            @ViewBag.Response
+        </p>
+    }
     <form asp-action="ExchangeRate" method="post">
         @*<p>
                 <label>Start Date</label>
