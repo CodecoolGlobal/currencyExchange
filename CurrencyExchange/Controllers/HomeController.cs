@@ -21,15 +21,27 @@ namespace CurrencyExchange.Controllers
 
         public IActionResult Index()
         {
-            var client = new RestClient("https://api.exchangeratesapi.io/history?start_at=2020-06-01&end_at=2020-07-01&base=USD");
-            var request = new RestRequest(Method.GET);
-            IRestResponse response = client.Execute(request);
-            ViewBag.Response = response.Content;
             return View();
         }
 
+
         public IActionResult Privacy()
         {
+            return View();
+        }
+
+        public IActionResult ExchangeRate()
+        {
+            return View();
+        }
+
+        [HttpPost]
+        public IActionResult ExchangeRate(Conversion conversion)
+        {
+            var client = new RestClient($"https://api.exchangeratesapi.io/latest?base={conversion.BaseCurrency}&symbols={conversion.EndCurrency}");
+            var request = new RestRequest(Method.GET);
+            IRestResponse response = client.Execute(request);
+            ViewBag.Response = response.Content;
             return View();
         }
 

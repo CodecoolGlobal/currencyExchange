@@ -1,0 +1,30 @@
+﻿@{
+    ViewData["Title"] = "Exchange Rate";
+}
+
+@model CurrencyExchange.Models.Conversion;
+
+<div class="text-center">
+    <p>
+        @ViewBag.Response
+    </p>
+    <form asp-action="ExchangeRate" method="post">
+        @*<p>
+                <label>Start Date</label>
+                <input asp-for="StartDate" value="2020.06.01"/>
+            </p>
+            <p>
+                <label>End Date</label>
+                <input asp-for="EndDate" value="2020.07.01"/>
+            </p>*@
+        <p>
+            <label>Base Currency</label>
+            <input asp-for="BaseCurrency" />
+        </p>
+        <p>
+            <label>End Currency</label>
+            <input asp-for="EndCurrency" />
+        </p>
+        <input type="submit" value="send" />
+    </form>
+</div>
