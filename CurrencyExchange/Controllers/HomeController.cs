@@ -9,6 +9,7 @@ using CurrencyExchange.Models;
 using RestSharp;
 using RestSharp.Serialization.Json;
 using Newtonsoft.Json;
+using System.Text;
 
 namespace CurrencyExchange.Controllers
 {
@@ -38,13 +39,40 @@ namespace CurrencyExchange.Controllers
 
             var client = new RestClient($"https://api.exchangeratesapi.io/history?start_at={strStartDate}&end_at={strEndDate}&base={baseCurrency}&symbols={endCurrency}");
             var request = new RestRequest(Method.GET);
+            HashSet<string> years = new HashSet<string>();
+            StringBuilder yearsString = new StringBuilder();
             IRestResponse response = client.Execute(request);
 
             JsonObject deserializedResponse = JsonConvert.DeserializeObject<JsonObject>(response.Content);
             JsonObject deserializedRates = JsonConvert.DeserializeObject<JsonObject>(deserializedResponse["rates"].ToString());
             var sortedRatesByDate = deserializedRates.OrderBy(d => d.Key).ToList();
+            //get years
+            StringBuilder sb = new StringBuilder();
+            StringBuilder sb1 = new StringBuilder();
 
+            //convert string to decimal
+            foreach (var item in sortedRatesByDate)
+            {
+                if(!years.Contains(item.Key.Substring(0, 7)))
+                {
+                var values = JsonConvert.DeserializeObject<Dictionary<string, decimal>>(item.Value.ToString());
+                //JsonObject deserializedResponse2 = JsonConvert.DeserializeObject<JsonObject>(item.Value.ToString());
+                foreach(var value in values.Values)
+                {
+                sb.Append(Convert.ToDecimal(value).ToString() + "/");
+                }
+                years.Add(item.Key.Substring(0, 7));
+                }
+                else { continue; }
+            }
+            foreach(var yeartring in years)
+            {
+                yearsString.Append(yeartring + ",");
+            }
+
+            ViewBag.Years = yearsString.ToString().Substring(0, yearsString.ToString().Length - 1);
             ViewBag.Rates = sortedRatesByDate;
+            ViewBag.Data = sb.ToString().Substring(0, sb.ToString().Length-1).Replace(",", ".");
             ViewBag.StartDate = strStartDate;
             ViewBag.EndDate = strEndDate;
             ViewBag.BaseCurrency = baseCurrency;
