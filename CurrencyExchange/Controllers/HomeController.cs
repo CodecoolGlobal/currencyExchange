@@ -33,7 +33,7 @@ namespace CurrencyExchange.Controllers
             }
             string strStartDate = startDate.ToString("yyyy-MM-dd");
             string strEndDate = endDate.ToString("yyyy-MM-dd");
-            string baseCurrency = "USD";
+            string baseCurrency = GetRandomCurrency();
             string endCurrency = "HUF";
 
             var client = new RestClient($"https://api.exchangeratesapi.io/history?start_at={strStartDate}&end_at={strEndDate}&base={baseCurrency}&symbols={endCurrency}");
@@ -113,7 +113,9 @@ namespace CurrencyExchange.Controllers
         private string GetRandomCurrency()
         {
             Random random = new Random();
-            return "USD";
+            currencies.Remove("HUF");
+            int index = random.Next(0, currencies.Count - 1);
+            return currencies[index];
         }
 
         private List<string> getCurrencies()
