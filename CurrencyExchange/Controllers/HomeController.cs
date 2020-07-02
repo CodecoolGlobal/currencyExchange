@@ -10,6 +10,7 @@ using RestSharp;
 using RestSharp.Serialization.Json;
 using Newtonsoft.Json;
 using System.Text;
+using Microsoft.AspNetCore.Http;
 
 namespace CurrencyExchange.Controllers
 {
@@ -80,6 +81,7 @@ namespace CurrencyExchange.Controllers
             ViewBag.EndDate = strEndDate;
             ViewBag.BaseCurrency = baseCurrency;
             ViewBag.EndCurrency = endCurrency;
+            ViewBag.User = HttpContext.Session.GetString("sessionUser");
             return View();
         }
 

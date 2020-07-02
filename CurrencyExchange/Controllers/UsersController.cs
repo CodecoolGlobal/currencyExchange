@@ -71,7 +71,6 @@ namespace CurrencyExchange.Controllers
                 if (passwordIsValid)
                 {
                     HttpContext.Session.SetString("sessionUser", user.Email);
-                    ViewBag.User = HttpContext.Session.GetString("sessionUser");
                     return RedirectToAction("Index", "Home");
                 }
             }
