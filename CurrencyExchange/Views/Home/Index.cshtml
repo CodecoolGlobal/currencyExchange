@@ -1,6 +1,11 @@
 ﻿@{
     ViewData["Title"] = "Home Page";
+    var diagramPoints = ViewBag.Data;
+    var years = ViewBag.Years;
 }
+<input type="hidden" id="DiagramPoints" value=@diagramPoints>
+<input type="hidden" id="Years" value=@years>
+
 
 <div class="text-center">
     <h2>
@@ -12,14 +17,19 @@
     </p>
 
     @*grafikon*@
+    <canvas id="lineChart" width="400" height="100"></canvas>
 
-    @foreach (var item in ViewBag.Rates)
-    {
-        <p>
-            @String.Format("{0:0.##}", item.Value[ViewBag.EndCurrency])
-        </p>
-    }
+    @*@foreach (var item in ViewBag.Rates)
+        {
+            <p>
+                @String.Format("{0:0.##}", item.Value[ViewBag.EndCurrency])
+            </p>
+        }*@
     <p>
         The fluctuation of @ViewBag.BaseCurrency compared to @ViewBag.EndCurrency between @ViewBag.StartDate and @ViewBag.EndDate
     </p>
 </div>
+
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/2.5.0/Chart.min.js"></script>
+<script src="~/js/Diagram.js" asp-append-version="true"></script>

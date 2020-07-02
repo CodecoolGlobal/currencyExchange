@@ -9,6 +9,7 @@ using CurrencyExchange.Models;
 using RestSharp;
 using RestSharp.Serialization.Json;
 using Newtonsoft.Json;
+using System.Text;
 
 namespace CurrencyExchange.Controllers
 {
@@ -33,7 +34,7 @@ namespace CurrencyExchange.Controllers
             }
             string strStartDate = startDate.ToString("yyyy-MM-dd");
             string strEndDate = endDate.ToString("yyyy-MM-dd");
-            string baseCurrency = "USD";
+            string baseCurrency = GetRandomCurrency();
             string endCurrency = "HUF";
 
             var client = new RestClient($"https://api.exchangeratesapi.io/history?start_at={strStartDate}&end_at={strEndDate}&base={baseCurrency}&symbols={endCurrency}");
@@ -44,7 +45,37 @@ namespace CurrencyExchange.Controllers
             JsonObject deserializedRates = JsonConvert.DeserializeObject<JsonObject>(deserializedResponse["rates"].ToString());
             var sortedRatesByDate = deserializedRates.OrderBy(d => d.Key).ToList();
 
-            ViewBag.Rates = sortedRatesByDate;
+            //get years and belonging points
+            HashSet<string> years = new HashSet<string>();
+            StringBuilder yearsString = new StringBuilder();
+            StringBuilder DataPoints = new StringBuilder();
+
+            //get selected points and convert tham into a string(we want to pass tham to javascript) 
+            foreach (var item in sortedRatesByDate)
+            {
+                if (!years.Contains(item.Key.Substring(0, 7)))
+                {
+                    var values = JsonConvert.DeserializeObject<Dictionary<string, decimal>>(item.Value.ToString());
+                    foreach (var value in values.Values)
+                    {
+                        DataPoints.Append(Convert.ToDecimal(value).ToString() + "/");
+                    }
+                    years.Add(item.Key.Substring(0, 7));
+                }
+                else { continue; }
+            }
+
+            //convert selected years into a string
+            foreach (var yeartring in years)
+            {
+                yearsString.Append(yeartring + ",");
+            }
+
+            //selected years in a correct format for javascript
+            ViewBag.Years = yearsString.ToString().Substring(0, yearsString.ToString().Length - 1);
+            //selected points in a correct format for javascript
+            ViewBag.Data = DataPoints.ToString().Substring(0, DataPoints.ToString().Length - 1).Replace(",", ".");
+
             ViewBag.StartDate = strStartDate;
             ViewBag.EndDate = strEndDate;
             ViewBag.BaseCurrency = baseCurrency;
@@ -113,7 +144,9 @@ namespace CurrencyExchange.Controllers
         private string GetRandomCurrency()
         {
             Random random = new Random();
-            return "USD";
+            currencies.Remove("HUF");
+            int index = random.Next(0, currencies.Count - 1);
+            return currencies[index];
         }
 
         private List<string> getCurrencies()
