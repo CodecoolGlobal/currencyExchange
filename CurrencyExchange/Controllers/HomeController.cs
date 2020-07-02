@@ -81,7 +81,6 @@ namespace CurrencyExchange.Controllers
             ViewBag.EndDate = strEndDate;
             ViewBag.BaseCurrency = baseCurrency;
             ViewBag.EndCurrency = endCurrency;
-            ViewBag.User = HttpContext.Session.GetString("sessionUser");
             return View();
         }
 

@@ -58,10 +58,6 @@ namespace CurrencyExchange.Controllers
         {
             if (ModelState.IsValid)
             {
-                //var cardsToLoad = context.Cards
-                //.Where(card => card.Category == this.Category);
-                
-                
                 User userFromDb = _context.Users.Where(userToRead => userToRead.Email == user.Email).First();
                 if (userFromDb == null)
                 {
