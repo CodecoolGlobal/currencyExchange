@@ -10,6 +10,7 @@ using RestSharp;
 using RestSharp.Serialization.Json;
 using Newtonsoft.Json;
 using System.Text;
+using Microsoft.AspNetCore.Http;
 
 namespace CurrencyExchange.Controllers
 {
