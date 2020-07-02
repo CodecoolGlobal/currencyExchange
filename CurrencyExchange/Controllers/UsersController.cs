@@ -7,6 +7,8 @@ using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
 using CurrencyExchange.Data;
 using CurrencyExchange.Models;
+using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Http;
 
 namespace CurrencyExchange.Controllers
 {
@@ -20,6 +22,7 @@ namespace CurrencyExchange.Controllers
         }
 
         // GET: Users
+        [Authorize]
         public async Task<IActionResult> Index()
         {
             return View(await _context.Users.ToListAsync());
@@ -43,8 +46,47 @@ namespace CurrencyExchange.Controllers
             return View(user);
         }
 
+        // GET: Users/Login
+        public IActionResult Login()
+        {
+            return View();
+        }
+
+        // POST: Users/Login
+        [HttpPost]
+        public IActionResult Login(User user)
+        {
+            if (ModelState.IsValid)
+            {
+                //var cardsToLoad = context.Cards
+                //.Where(card => card.Category == this.Category);
+                
+                
+                User userFromDb = _context.Users.Where(userToRead => userToRead.Email == user.Email).First();
+                if (userFromDb == null)
+                {
+                    return View();
+                }
+                bool passwordIsValid = BCrypt.Net.BCrypt.Verify(user.Password, userFromDb.Password);
+                if (passwordIsValid)
+                {
+                    HttpContext.Session.SetString("sessionUser", user.Email);
+                    ViewBag.User = HttpContext.Session.GetString("sessionUser");
+                    return RedirectToAction("Index", "Home");
+                }
+            }
+            return View();
+        }
+
+        // GET: Users/Logout
+        public IActionResult Logout()
+        {
+            HttpContext.Session.Clear();
+            return RedirectToAction("Index", "Home");
+        }
+
         // GET: Users/Create
-        public IActionResult Create()
+        public IActionResult Register()
         {
             return View();
         }
@@ -54,15 +96,16 @@ namespace CurrencyExchange.Controllers
         // more details see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Create([Bind("ID,Email,Password")] User user)
+        public async Task<IActionResult> Register([Bind("ID,Email,Password")] User user)
         {
             if (ModelState.IsValid)
             {
+                user.Password = BCrypt.Net.BCrypt.HashPassword(user.Password);
                 _context.Add(user);
                 await _context.SaveChangesAsync();
                 return RedirectToAction(nameof(Index));
             }
-            return View(user);
+            return RedirectToAction("Index", "Home");
         }
 
         // GET: Users/Edit/5

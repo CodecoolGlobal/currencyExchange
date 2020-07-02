@@ -29,6 +29,11 @@ namespace CurrencyExchange
 
             services.AddDbContext<CurrencyExchangeContext>(options =>
             options.UseSqlServer(Configuration.GetConnectionString("CurrencyExchangeContext")));
+
+            services.AddSession(options =>
+            {
+                options.IdleTimeout = TimeSpan.FromSeconds(3600);
+            });
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
@@ -50,6 +55,8 @@ namespace CurrencyExchange
             app.UseRouting();
 
             app.UseAuthorization();
+
+            app.UseSession();
 
             app.UseEndpoints(endpoints =>
             {
