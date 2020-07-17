@@ -146,7 +146,7 @@ namespace CurrencyExchange.Controllers
         {
             Random random = new Random();
             List<string> baseCurrencies = new List<string>() { "EUR", "USD", "CHF", "GBP" };
-            int index = random.Next(0, 4);
+            int index = random.Next(0, baseCurrencies.Count -1);
             return baseCurrencies[index];
         }
 
