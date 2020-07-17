@@ -66,7 +66,7 @@ namespace CurrencyExchange.Controllers
                 bool passwordIsValid = BCrypt.Net.BCrypt.Verify(user.Password, userFromDb.Password);
                 if (passwordIsValid)
                 {
-                    HttpContext.Session.SetString("sessionUser", user.Email);
+                    HttpContext.Session.SetString("sessionUser", userFromDb.ID.ToString());
                     return RedirectToAction("Index", "Home");
                 }
             }
@@ -98,7 +98,6 @@ namespace CurrencyExchange.Controllers
                 user.Password = BCrypt.Net.BCrypt.HashPassword(user.Password);
                 _context.Add(user);
                 await _context.SaveChangesAsync();
-                return RedirectToAction(nameof(Index));
             }
             return RedirectToAction("Index", "Home");
         }
