@@ -31,19 +31,27 @@ namespace CurrencyExchange.Controllers
         // GET: Users/Details/5
         public async Task<IActionResult> Details(int? id)
         {
-            if (id == null)
+            string userIdFromSession = HttpContext.Session.GetString("sessionUser");
+            if (id.Equals(Convert.ToInt32(userIdFromSession)))
             {
-                return NotFound();
-            }
+                if (id == null)
+                {
+                    return NotFound();
+                }
 
-            var user = await _context.Users
-                .FirstOrDefaultAsync(m => m.ID == id);
-            if (user == null)
+                var user = await _context.Users
+                    .FirstOrDefaultAsync(m => m.ID == id);
+                if (user == null)
+                {
+                    return NotFound();
+                }
+
+                return View(user);
+            }
+            else
             {
-                return NotFound();
+                return RedirectToAction("Index", "Home");
             }
-
-            return View(user);
         }
 
         // GET: Users/Login
