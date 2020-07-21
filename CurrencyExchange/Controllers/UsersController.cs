@@ -104,6 +104,7 @@ namespace CurrencyExchange.Controllers
             if (ModelState.IsValid)
             {
                 user.Password = BCrypt.Net.BCrypt.HashPassword(user.Password);
+                user.Role = "User";
                 _context.Add(user);
                 await _context.SaveChangesAsync();
             }
