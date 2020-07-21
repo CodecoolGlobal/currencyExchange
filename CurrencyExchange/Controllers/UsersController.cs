@@ -22,10 +22,17 @@ namespace CurrencyExchange.Controllers
         }
 
         // GET: Users
-        [Authorize]
+        //[Authorize]
         public async Task<IActionResult> Index()
         {
-            return View(await _context.Users.ToListAsync());
+            if (HttpContext.Session.GetString("sessionUserRole").Equals("Admin"))
+            {
+                return View(await _context.Users.ToListAsync());
+            }
+            else
+            {
+                return RedirectToAction("Index", "Home");
+            }
         }
 
         // GET: Users/Details/5
@@ -75,6 +82,7 @@ namespace CurrencyExchange.Controllers
                 if (passwordIsValid)
                 {
                     HttpContext.Session.SetString("sessionUser", userFromDb.ID.ToString());
+                    HttpContext.Session.SetString("sessionUserRole", userFromDb.Role);
                     return RedirectToAction("Index", "Home");
                 }
             }
