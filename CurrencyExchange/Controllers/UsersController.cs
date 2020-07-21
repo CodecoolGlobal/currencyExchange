@@ -107,7 +107,7 @@ namespace CurrencyExchange.Controllers
         // more details see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Register([Bind("ID,Email,Password")] User user)
+        public async Task<IActionResult> Register([Bind("ID,Email,Password,ConfirmPassword")] User user)
         {
             if (ModelState.IsValid)
             {
