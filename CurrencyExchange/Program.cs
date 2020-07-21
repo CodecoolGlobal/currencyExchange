@@ -17,11 +17,11 @@ namespace CurrencyExchange
         {
             var host = CreateHostBuilder(args).Build();
 
-            using (var scope = host.Services.CreateScope())
-            {
-                var services = scope.ServiceProvider;
-                SetAdminRole.Initialize(services, 7);
-            }
+            //using (var scope = host.Services.CreateScope())
+            //{
+            //    var services = scope.ServiceProvider;
+            //    SetAdminRole.Initialize(services, 7);
+            //}
 
             host.Run();
         }
