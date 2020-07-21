@@ -9,6 +9,7 @@ using CurrencyExchange.Data;
 using CurrencyExchange.Models;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
+using Microsoft.AspNetCore.Mvc.ModelBinding;
 
 namespace CurrencyExchange.Controllers
 {
@@ -71,8 +72,11 @@ namespace CurrencyExchange.Controllers
         [HttpPost]
         public IActionResult Login(User user)
         {
-            if (ModelState.IsValid)
-            {
+            int a = 1;
+            if (ModelState["Email"].ValidationState.Equals(ModelValidationState.Valid) && ModelState["Password"].ValidationState.Equals(ModelValidationState.Valid))
+                {
+
+            //if (ModelState.IsValid)
                 User userFromDb = _context.Users.Where(userToRead => userToRead.Email == user.Email).First();
                 if (userFromDb == null)
                 {
@@ -86,6 +90,7 @@ namespace CurrencyExchange.Controllers
                     return RedirectToAction("Index", "Home");
                 }
             }
+            a = 10;
             return View();
         }
 
