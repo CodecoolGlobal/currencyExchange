@@ -25,7 +25,7 @@ namespace CurrencyExchange.Controllers
             currencies = getCurrencies();
         }
 
-        public IActionResult Index()
+        public async Task<IActionResult> IndexAsync()
         {
             DateTime startDate = GetRandomDate();
             DateTime endDate = GetRandomDate();
@@ -40,7 +40,7 @@ namespace CurrencyExchange.Controllers
 
             var client = new RestClient($"https://api.exchangeratesapi.io/history?start_at={strStartDate}&end_at={strEndDate}&base={baseCurrency}&symbols={endCurrency}");
             var request = new RestRequest(Method.GET);
-            IRestResponse response = client.Execute(request);
+            IRestResponse response = await client.ExecuteAsync(request);
 
             JsonObject deserializedResponse = JsonConvert.DeserializeObject<JsonObject>(response.Content);
             JsonObject deserializedRates = JsonConvert.DeserializeObject<JsonObject>(deserializedResponse["rates"].ToString());
@@ -145,9 +145,9 @@ namespace CurrencyExchange.Controllers
         private string GetRandomCurrency()
         {
             Random random = new Random();
-            currencies.Remove("HUF");
-            int index = random.Next(0, currencies.Count - 1);
-            return currencies[index];
+            List<string> baseCurrencies = new List<string>() { "EUR", "USD", "CHF", "GBP" };
+            int index = random.Next(0, baseCurrencies.Count -1);
+            return baseCurrencies[index];
         }
 
         private List<string> getCurrencies()

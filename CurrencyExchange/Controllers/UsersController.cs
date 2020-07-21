@@ -31,19 +31,27 @@ namespace CurrencyExchange.Controllers
         // GET: Users/Details/5
         public async Task<IActionResult> Details(int? id)
         {
-            if (id == null)
+            string userIdFromSession = HttpContext.Session.GetString("sessionUser");
+            if (id.Equals(Convert.ToInt32(userIdFromSession)))
             {
-                return NotFound();
-            }
+                if (id == null)
+                {
+                    return NotFound();
+                }
 
-            var user = await _context.Users
-                .FirstOrDefaultAsync(m => m.ID == id);
-            if (user == null)
+                var user = await _context.Users
+                    .FirstOrDefaultAsync(m => m.ID == id);
+                if (user == null)
+                {
+                    return NotFound();
+                }
+
+                return View(user);
+            }
+            else
             {
-                return NotFound();
+                return RedirectToAction("Index", "Home");
             }
-
-            return View(user);
         }
 
         // GET: Users/Login
@@ -66,7 +74,7 @@ namespace CurrencyExchange.Controllers
                 bool passwordIsValid = BCrypt.Net.BCrypt.Verify(user.Password, userFromDb.Password);
                 if (passwordIsValid)
                 {
-                    HttpContext.Session.SetString("sessionUser", user.Email);
+                    HttpContext.Session.SetString("sessionUser", userFromDb.ID.ToString());
                     return RedirectToAction("Index", "Home");
                 }
             }
@@ -98,7 +106,6 @@ namespace CurrencyExchange.Controllers
                 user.Password = BCrypt.Net.BCrypt.HashPassword(user.Password);
                 _context.Add(user);
                 await _context.SaveChangesAsync();
-                return RedirectToAction(nameof(Index));
             }
             return RedirectToAction("Index", "Home");
         }
@@ -111,12 +118,23 @@ namespace CurrencyExchange.Controllers
                 return NotFound();
             }
 
-            var user = await _context.Users.FindAsync(id);
-            if (user == null)
+            string userIdFromSession = HttpContext.Session.GetString("sessionUser");
+            if (id.Equals(Convert.ToInt32(userIdFromSession)))
             {
-                return NotFound();
+                var user = await _context.Users.FindAsync(id);
+                if (user == null)
+                {
+                    return NotFound();
+                }
+                return View(user);
+
             }
-            return View(user);
+            else
+            {
+                return RedirectToAction("Index", "Home");
+            }
+
+
         }
 
         // POST: Users/Edit/5
