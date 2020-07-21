@@ -118,12 +118,23 @@ namespace CurrencyExchange.Controllers
                 return NotFound();
             }
 
-            var user = await _context.Users.FindAsync(id);
-            if (user == null)
+            string userIdFromSession = HttpContext.Session.GetString("sessionUser");
+            if (id.Equals(Convert.ToInt32(userIdFromSession)))
             {
-                return NotFound();
+                var user = await _context.Users.FindAsync(id);
+                if (user == null)
+                {
+                    return NotFound();
+                }
+                return View(user);
+
             }
-            return View(user);
+            else
+            {
+                return RedirectToAction("Index", "Home");
+            }
+
+
         }
 
         // POST: Users/Edit/5
