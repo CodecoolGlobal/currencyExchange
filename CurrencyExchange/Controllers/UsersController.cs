@@ -9,6 +9,7 @@ using CurrencyExchange.Data;
 using CurrencyExchange.Models;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
+using Microsoft.AspNetCore.Mvc.ModelBinding;
 
 namespace CurrencyExchange.Controllers
 {
@@ -22,10 +23,17 @@ namespace CurrencyExchange.Controllers
         }
 
         // GET: Users
-        [Authorize]
+        //[Authorize]
         public async Task<IActionResult> Index()
         {
-            return View(await _context.Users.ToListAsync());
+            if (HttpContext.Session.GetString("sessionUserRole").Equals("Admin"))
+            {
+                return View(await _context.Users.ToListAsync());
+            }
+            else
+            {
+                return RedirectToAction("Index", "Home");
+            }
         }
 
         // GET: Users/Details/5
@@ -64,8 +72,11 @@ namespace CurrencyExchange.Controllers
         [HttpPost]
         public IActionResult Login(User user)
         {
-            if (ModelState.IsValid)
-            {
+            int a = 1;
+            if (ModelState["Email"].ValidationState.Equals(ModelValidationState.Valid) && ModelState["Password"].ValidationState.Equals(ModelValidationState.Valid))
+                {
+
+            //if (ModelState.IsValid)
                 User userFromDb = _context.Users.Where(userToRead => userToRead.Email == user.Email).First();
                 if (userFromDb == null)
                 {
@@ -75,9 +86,11 @@ namespace CurrencyExchange.Controllers
                 if (passwordIsValid)
                 {
                     HttpContext.Session.SetString("sessionUser", userFromDb.ID.ToString());
+                    HttpContext.Session.SetString("sessionUserRole", userFromDb.Role);
                     return RedirectToAction("Index", "Home");
                 }
             }
+            a = 10;
             return View();
         }
 
@@ -99,11 +112,12 @@ namespace CurrencyExchange.Controllers
         // more details see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Register([Bind("ID,Email,Password")] User user)
+        public async Task<IActionResult> Register([Bind("ID,Email,Password,ConfirmPassword")] User user)
         {
             if (ModelState.IsValid)
             {
                 user.Password = BCrypt.Net.BCrypt.HashPassword(user.Password);
+                user.Role = "User";
                 _context.Add(user);
                 await _context.SaveChangesAsync();
             }

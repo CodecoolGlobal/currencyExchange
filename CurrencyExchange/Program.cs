@@ -20,7 +20,7 @@ namespace CurrencyExchange
             //using (var scope = host.Services.CreateScope())
             //{
             //    var services = scope.ServiceProvider;
-            //    SetAdminRole.Initialize(services, 7);
+            //    SetAdminRole.Initialize(services, 1006);
             //}
 
             host.Run();
