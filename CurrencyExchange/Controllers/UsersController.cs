@@ -73,7 +73,10 @@ namespace CurrencyExchange.Controllers
         [HttpPost]
         public IActionResult Login(User user)
         {
-            int a = 1;
+            if (user.ConfirmPassword == null)
+            {
+                user.ConfirmPassword = user.Password;
+            }
             if (ModelState["Email"].ValidationState.Equals(ModelValidationState.Valid) && ModelState["Password"].ValidationState.Equals(ModelValidationState.Valid))
             {
 
@@ -83,7 +86,7 @@ namespace CurrencyExchange.Controllers
                 {
                     return View();
                 }
-                bool passwordIsValid = BCrypt.Net.BCrypt.Verify(user.Password, userFromDb.Password);
+                bool passwordIsValid = BCrypt.Net.BCrypt.Verify(user.ConfirmPassword, userFromDb.Password);
                 if (passwordIsValid)
                 {
                     HttpContext.Session.SetString("sessionUser", userFromDb.ID.ToString());
@@ -91,7 +94,6 @@ namespace CurrencyExchange.Controllers
                     return RedirectToAction("Index", "Home");
                 }
             }
-            a = 10;
             return View();
         }
 
@@ -135,7 +137,7 @@ namespace CurrencyExchange.Controllers
                     return View();
                 }
             }
-            return RedirectToAction("Index", "Home");
+            return Login(user);
         }
 
         // GET: Users/Edit/5
