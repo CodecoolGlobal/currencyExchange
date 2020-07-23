@@ -11,6 +11,11 @@ namespace CurrencyExchange.Models
     {
         public int ID { get; set; }
 
+        [Display(Name = "User Name")]
+        [StringLength(20, MinimumLength = 3)]
+        [Required]
+        public string UserName { get; set; }
+
         [DataType(DataType.EmailAddress), Display(Name = "Email Address")]
         [Required]
         public string Email { get; set; }
