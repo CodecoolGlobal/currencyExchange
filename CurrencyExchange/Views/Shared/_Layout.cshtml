@@ -43,6 +43,13 @@
                                 <a class="nav-link text-dark" asp-area="" asp-controller="Users" asp-action="Logout">Logout</a>
                             </li>
                         }
+                        @if (Context.Session.GetString("sessionUserRole") == "Admin")
+                        {
+                            <li class="nav-item">
+                                <a class="nav-link text-dark" asp-area="" asp-controller="Users" asp-action="Index">Users</a>
+                            </li>
+                        }
+
                     </ul>
                 </div>
             </div>

@@ -167,12 +167,13 @@ namespace CurrencyExchange.Controllers
 
         }
 
+
         // POST: Users/Edit/5
         // To protect from overposting attacks, please enable the specific properties you want to bind to, for 
         // more details see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Edit(int id, [Bind("ID,Email,Password")] User user)
+        public async Task<IActionResult> Edit(int id, [Bind("ID,Email,Password,UserName")] User user)
         {
             if (id != user.ID)
             {
@@ -201,6 +202,76 @@ namespace CurrencyExchange.Controllers
             }
             return View(user);
         }
+
+        //Edit Email
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public async Task<IActionResult> ChangeEmail(int id, [Bind("Email,ID")] User user )
+        {
+            if (id != user.ID)
+            {
+                return NotFound();
+            }
+
+            if (ModelState["Email"].ValidationState.Equals(ModelValidationState.Valid))
+            {
+                try
+                {
+                    //_context.Update(user);
+                    _context.Entry(user).Property("Email").IsModified = true;
+                    await _context.SaveChangesAsync();
+                }
+                catch (DbUpdateConcurrencyException)
+                {
+                    if (!UserExists(user.ID))
+                    {
+                        return NotFound();
+                    }
+                    else
+                    {
+                        throw;
+                    }
+                }
+                return RedirectToAction(nameof(Index));
+            }
+            return View(user);
+        }
+
+
+        //Edit User Name
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public async Task<IActionResult> ChangeUserName(int id, [Bind("UserName,ID")] User user)
+        {
+            if (id != user.ID)
+            {
+                return NotFound();
+            }
+
+            if (ModelState["UserName"].ValidationState.Equals(ModelValidationState.Valid))
+            {
+                try
+                {
+                    //_context.Update(user);
+                    _context.Entry(user).Property("UserName").IsModified = true;
+                    await _context.SaveChangesAsync();
+                }
+                catch (DbUpdateConcurrencyException)
+                {
+                    if (!UserExists(user.ID))
+                    {
+                        return NotFound();
+                    }
+                    else
+                    {
+                        throw;
+                    }
+                }
+                return RedirectToAction(nameof(Index));
+            }
+            return View(user);
+        }
+
 
         // GET: Users/Delete/5
         public async Task<IActionResult> Delete(int? id)
