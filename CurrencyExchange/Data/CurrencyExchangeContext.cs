@@ -14,6 +14,18 @@ namespace CurrencyExchange.Data
         {
         }
 
+        protected override void OnModelCreating(ModelBuilder builder)
+        {
+            builder.Entity<User>()
+                .HasIndex(u => u.Email)
+                .IsUnique();
+
+            builder.Entity<User>()
+                .HasIndex(u => u.UserName)
+                .IsUnique();
+        }
+
+
         public DbSet<User> Users { get; set; }
     }
 }

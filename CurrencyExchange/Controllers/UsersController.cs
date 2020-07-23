@@ -10,6 +10,7 @@ using CurrencyExchange.Models;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc.ModelBinding;
+using Microsoft.Data.SqlClient;
 
 namespace CurrencyExchange.Controllers
 {
@@ -74,9 +75,9 @@ namespace CurrencyExchange.Controllers
         {
             int a = 1;
             if (ModelState["Email"].ValidationState.Equals(ModelValidationState.Valid) && ModelState["Password"].ValidationState.Equals(ModelValidationState.Valid))
-                {
+            {
 
-            //if (ModelState.IsValid)
+                //if (ModelState.IsValid)
                 User userFromDb = _context.Users.Where(userToRead => userToRead.Email == user.Email).First();
                 if (userFromDb == null)
                 {
@@ -112,14 +113,27 @@ namespace CurrencyExchange.Controllers
         // more details see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Register([Bind("ID,Email,Password,ConfirmPassword")] User user)
+        public async Task<IActionResult> Register([Bind("ID,Email,UserName,Password,ConfirmPassword")] User user)
         {
             if (ModelState.IsValid)
             {
                 user.Password = BCrypt.Net.BCrypt.HashPassword(user.Password);
                 user.Role = "User";
-                _context.Add(user);
-                await _context.SaveChangesAsync();
+                try
+                {
+                    _context.Add(user);
+                    await _context.SaveChangesAsync();
+                }
+                catch (SqlException e)
+                {
+                    Alert(e);
+                    return View();
+                }
+                catch (DbUpdateException e)
+                {
+                    Alert(e);
+                    return View();
+                }
             }
             return RedirectToAction("Index", "Home");
         }
@@ -218,6 +232,22 @@ namespace CurrencyExchange.Controllers
         private bool UserExists(int id)
         {
             return _context.Users.Any(e => e.ID == id);
+        }
+
+        private void Alert(Exception e)
+        {
+            string InvalidColumn = "";
+            string ExceptionMessage = e.InnerException.Message;
+            if (ExceptionMessage.Contains("Email"))
+            {
+                InvalidColumn = "Email Address";
+            }
+            else
+            {
+                InvalidColumn = "Username";
+            }
+            string AlertMessage = InvalidColumn + " is already in use!";
+            ViewBag.Alert = AlertMessage;
         }
     }
 }
