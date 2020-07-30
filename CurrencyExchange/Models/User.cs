@@ -1,9 +1,5 @@
-﻿using System;
-using System.Collections.Generic;
-using System.ComponentModel.DataAnnotations;
+﻿using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
-using System.Linq;
-using System.Threading.Tasks;
 
 namespace CurrencyExchange.Models
 {
@@ -19,7 +15,7 @@ namespace CurrencyExchange.Models
         [DataType(DataType.EmailAddress), Display(Name = "Email Address")]
         [Required]
         public string Email { get; set; }
-        
+
         [DataType(DataType.Password)]
         [StringLength(100, MinimumLength = 8)]
         [Required]

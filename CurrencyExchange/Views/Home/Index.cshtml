@@ -29,8 +29,11 @@
     <p>
         The fluctuation of @ViewBag.BaseCurrency compared to @ViewBag.EndCurrency between @ViewBag.StartDate and @ViewBag.EndDate
     </p>
-    <form>
-        <button formmethod="post" asp-controller="Home" asp-action="SendMail" asp-route-address=@Context.Session.GetString("sessionUserEmail")>Send Mail</button>
+    <form method="post">
+        <button asp-controller="Home" asp-action="SendMail"
+                asp-route-address=@Context.Session.GetString("sessionUserEmail")>
+            Send Mail
+        </button>
     </form>
 </div>
 

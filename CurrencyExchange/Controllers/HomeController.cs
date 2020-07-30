@@ -7,7 +7,6 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
 using CurrencyExchange.Models;
 using RestSharp;
-using RestSharp.Serialization.Json;
 using Newtonsoft.Json;
 using System.Text;
 using Microsoft.AspNetCore.Http;
@@ -148,7 +147,7 @@ namespace CurrencyExchange.Controllers
         {
             Random random = new Random();
             List<string> baseCurrencies = new List<string>() { "EUR", "USD", "CHF", "GBP" };
-            int index = random.Next(0, baseCurrencies.Count -1);
+            int index = random.Next(0, baseCurrencies.Count - 1);
             return baseCurrencies[index];
         }
 
@@ -170,8 +169,6 @@ namespace CurrencyExchange.Controllers
         [HttpPost]
         public IActionResult SendMail(string address)
         {
-            //string path = "./Resources/send.txt";
-            //string address = System.IO.File.ReadAllText(path);
             Email email = new Email(address, "david", "tema", "uzenet" + numMail);
             numMail++;
             MessageService.SendMail(email);

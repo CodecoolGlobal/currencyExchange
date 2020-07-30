@@ -1,13 +1,10 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
 using CurrencyExchange.Data;
 using CurrencyExchange.Models;
-using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc.ModelBinding;
 using Microsoft.Data.SqlClient;
@@ -207,7 +204,7 @@ namespace CurrencyExchange.Controllers
         //Edit Email
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> ChangeEmail(int id, [Bind("Email,ID")] User user )
+        public async Task<IActionResult> ChangeEmail(int id, [Bind("Email,ID")] User user)
         {
             if (id != user.ID)
             {
