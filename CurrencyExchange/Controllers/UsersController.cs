@@ -91,6 +91,7 @@ namespace CurrencyExchange.Controllers
                 {
                     HttpContext.Session.SetString("sessionUser", userFromDb.ID.ToString());
                     HttpContext.Session.SetString("sessionUserRole", userFromDb.Role);
+                    HttpContext.Session.SetString("sessionUserEmail", userFromDb.Email);
                     return RedirectToAction("Index", "Home");
                 }
             }

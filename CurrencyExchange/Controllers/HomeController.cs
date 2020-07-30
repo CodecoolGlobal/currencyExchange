@@ -167,10 +167,11 @@ namespace CurrencyExchange.Controllers
             return currencies;
         }
 
-        public IActionResult SendMail()
+        [HttpPost]
+        public IActionResult SendMail(string address)
         {
-            string path = "./Resources/send.txt";
-            string address = System.IO.File.ReadAllText(path);
+            //string path = "./Resources/send.txt";
+            //string address = System.IO.File.ReadAllText(path);
             Email email = new Email(address, "david", "tema", "uzenet" + numMail);
             numMail++;
             MessageService.SendMail(email);
