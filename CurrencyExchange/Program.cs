@@ -24,13 +24,6 @@ namespace CurrencyExchange
             //    SetAdminRole.Initialize(services, 1006);
             //}
             MessageService service = new MessageService();
-            
-            string path = "./Resources/send.txt";
-            string address = System.IO.File.ReadAllText(path);
-            Email email = new Email(address, "david", "tema", "uzenet");
-
-            MessageService.SendMail(email);
-
 
 
             host.Run();

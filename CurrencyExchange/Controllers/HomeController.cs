@@ -11,6 +11,7 @@ using RestSharp.Serialization.Json;
 using Newtonsoft.Json;
 using System.Text;
 using Microsoft.AspNetCore.Http;
+using CurrencyExchange.Services;
 
 namespace CurrencyExchange.Controllers
 {
@@ -18,6 +19,7 @@ namespace CurrencyExchange.Controllers
     {
         private readonly ILogger<HomeController> _logger;
         private readonly List<string> currencies;
+        static int numMail = 1;
 
         public HomeController(ILogger<HomeController> logger)
         {
@@ -159,10 +161,20 @@ namespace CurrencyExchange.Controllers
             //var JSONObj = deserial.Deserialize<Dictionary<string, string>>(response);
             JsonObject ourlisting = JsonConvert.DeserializeObject<JsonObject>(response.Content);
             JsonObject ourlisting2 = JsonConvert.DeserializeObject<JsonObject>(ourlisting["rates"].ToString());
-            List<string> currencyes = ourlisting2.Keys.ToList();
-            currencyes.Add("EUR");
+            List<string> currencies = ourlisting2.Keys.ToList();
+            currencies.Add("EUR");
 
-            return currencyes;
+            return currencies;
+        }
+
+        public IActionResult SendMail()
+        {
+            string path = "./Resources/send.txt";
+            string address = System.IO.File.ReadAllText(path);
+            Email email = new Email(address, "david", "tema", "uzenet" + numMail);
+            numMail++;
+            MessageService.SendMail(email);
+            return Redirect("Index");
         }
     }
 }
