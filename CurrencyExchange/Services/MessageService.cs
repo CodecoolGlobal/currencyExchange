@@ -15,9 +15,14 @@ namespace CurrencyExchange.Services
         public static ImapClient client;
         private static string hostEmailAddress;
         private static string hostEmailPassword;
+        readonly string Path = "./Resources/login.txt";
        
         public MessageService()
         {
+            string[] lines = System.IO.File.ReadAllLines(Path);
+            hostEmailAddress = lines[0];
+            hostEmailPassword = lines[1];
+
             client = new ImapClient();
             Connection(hostEmailAddress, hostEmailPassword);
         }

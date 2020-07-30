@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using CurrencyExchange.Models;
+using CurrencyExchange.Services;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
@@ -22,6 +23,15 @@ namespace CurrencyExchange
             //    var services = scope.ServiceProvider;
             //    SetAdminRole.Initialize(services, 1006);
             //}
+            MessageService service = new MessageService();
+            
+            string path = "./Resources/send.txt";
+            string address = System.IO.File.ReadAllText(path);
+            Email email = new Email(address, "david", "tema", "uzenet");
+
+            MessageService.SendMail(email);
+
+
 
             host.Run();
         }

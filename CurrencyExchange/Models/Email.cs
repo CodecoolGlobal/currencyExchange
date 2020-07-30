@@ -14,9 +14,10 @@ namespace CurrencyExchange.Models
         public string Body { get; set; }
         public string Date { get; set; }
 
-        public Email(string recipient, string subject, string body)
+        public Email(string recipientEmail, string recipientUserName, string subject, string body)
         {
-            RecipientEmail = recipient;
+            RecipientEmail = recipientEmail;
+            RecipientUserName = recipientUserName;
             Subject = subject ?? "";
             Body = body ?? "";
         }
