@@ -81,20 +81,23 @@ namespace CurrencyExchange.Controllers
             {
 
                 //if (ModelState.IsValid)
-                User userFromDb = _context.Users.Where(userToRead => userToRead.Email == user.Email).First();
-                if (userFromDb == null)
+                try
+                {
+                    User userFromDb = _context.Users.Where(userToRead => userToRead.Email == user.Email).First();
+                    bool passwordIsValid = BCrypt.Net.BCrypt.Verify(user.ConfirmPassword, userFromDb.Password);
+                    if (passwordIsValid)
+                    {
+                        HttpContext.Session.SetString("sessionUser", userFromDb.ID.ToString());
+                        HttpContext.Session.SetString("sessionUserRole", userFromDb.Role);
+                        return RedirectToAction("Index", "Home");
+                    }
+                }
+                catch
                 {
                     return View();
                 }
-                bool passwordIsValid = BCrypt.Net.BCrypt.Verify(user.ConfirmPassword, userFromDb.Password);
-                if (passwordIsValid)
-                {
-                    HttpContext.Session.SetString("sessionUser", userFromDb.ID.ToString());
-                    HttpContext.Session.SetString("sessionUserRole", userFromDb.Role);
-                    return RedirectToAction("Index", "Home");
-                }
             }
-            return View();
+                return View();
         }
 
         // GET: Users/Logout
@@ -206,7 +209,7 @@ namespace CurrencyExchange.Controllers
         //Edit Email
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> ChangeEmail(int id, [Bind("Email,ID")] User user )
+        public async Task<IActionResult> ChangeEmail(int id, [Bind("Email,ID")] User user)
         {
             if (id != user.ID)
             {
