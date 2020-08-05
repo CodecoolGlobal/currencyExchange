@@ -1,0 +1,48 @@
+﻿@model CurrencyExchange.Models.Notification
+
+@{
+    ViewData["Title"] = "Create";
+}
+@using Microsoft.AspNetCore.Http;
+<h1>Create</h1>
+
+<h4>Notification</h4>
+<hr />
+<div class="row">
+    <div class="col-md-4">
+        <form asp-action="Create" asp-route-id="@Convert.ToInt32(Context.Session.GetString("sessionUser"))">
+            <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+            <div class="form-group">
+                <label asp-for="BaseCurrency" class="control-label"></label>
+                <input asp-for="BaseCurrency" class="form-control" />
+                <span asp-validation-for="BaseCurrency" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <label asp-for="EndCurrency" class="control-label"></label>
+                <input asp-for="EndCurrency" class="form-control" />
+                <span asp-validation-for="EndCurrency" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <label asp-for="Value" class="control-label"></label>
+                <input asp-for="Value" class="form-control" />
+                <span asp-validation-for="Value" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <label asp-for="AboverOrUnder" class="control-label"></label>
+                <input asp-for="AboverOrUnder" class="form-control" />
+                <span asp-validation-for="AboverOrUnder" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <input type="submit" value="Create" class="btn btn-primary" />
+            </div>
+        </form>
+    </div>
+</div>
+
+<div>
+    <a asp-action="Index">Back to List</a>
+</div>
+
+@section Scripts {
+    @{await Html.RenderPartialAsync("_ValidationScriptsPartial");}
+}
