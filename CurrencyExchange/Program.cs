@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using CurrencyExchange.Models;
+using CurrencyExchange.Services;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
@@ -17,12 +18,11 @@ namespace CurrencyExchange
         {
             var host = CreateHostBuilder(args).Build();
 
-            //using (var scope = host.Services.CreateScope())
-            //{
-            //    var services = scope.ServiceProvider;
-            //    SetAdminRole.Initialize(services, 1006);
-            //}
-
+            using (var scope = host.Services.CreateScope())
+            {
+                var services = scope.ServiceProvider;
+                NotificationService.Initialize(services);
+            }
             host.Run();
         }
 

@@ -7,6 +7,7 @@ using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
 using CurrencyExchange.Data;
 using CurrencyExchange.Models;
+using Microsoft.AspNetCore.Http;
 
 namespace CurrencyExchange.Controllers
 {
@@ -22,31 +23,43 @@ namespace CurrencyExchange.Controllers
         // GET: Notifications
         public async Task<IActionResult> Index(int id)
         {
-            List<Notification> notifications = await _context.Notifications.Where(notificationsToRead => notificationsToRead.User.ID == id).ToListAsync();
-            return View(notifications);
+            int userIdFromSession = Convert.ToInt32(HttpContext.Session.GetString("sessionUser"));
+            if (id == userIdFromSession)
+            {
+                List<Notification> notifications = await _context.Notifications.Where(notificationsToRead => notificationsToRead.User.ID == id).ToListAsync();
+                return View(notifications);
+            }
+            else
+            {
+                return RedirectToAction("Index", "Home");
+            }
         }
 
         // GET: Notifications/Details/5
-        public async Task<IActionResult> Details(int? id)
-        {
-            if (id == null)
-            {
-                return NotFound();
-            }
+        //public async Task<IActionResult> Details(int? id)
+        //{
+        //    if (id == null)
+        //    {
+        //        return NotFound();
+        //    }
 
-            var notification = await _context.Notifications
-                .FirstOrDefaultAsync(m => m.ID == id);
-            if (notification == null)
-            {
-                return NotFound();
-            }
+        //    var notification = await _context.Notifications
+        //        .FirstOrDefaultAsync(m => m.ID == id);
+        //    if (notification == null)
+        //    {
+        //        return NotFound();
+        //    }
 
-            return View(notification);
-        }
+        //    return View(notification);
+        //}
 
         // GET: Notifications/Create
         public IActionResult Create()
         {
+            if (HttpContext.Session.GetString("sessionUser") == null)
+            {
+                return RedirectToAction("Index", "Home");
+            }
             return View();
         }
 
@@ -55,83 +68,95 @@ namespace CurrencyExchange.Controllers
         // more details see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Create([Bind("BaseCurrency,EndCurrency,Value,AboverOrUnder")] Notification notification, int id)
+        public async Task<IActionResult> Create([Bind("BaseCurrency,EndCurrency,Value,AboverOrUnder")] Notification notification)
         {
             if (ModelState.IsValid)
             {
-                User userFromDb = _context.Users.Where(userToRead => userToRead.ID == id).First();
+                int userIdFromSession = Convert.ToInt32(HttpContext.Session.GetString("sessionUser"));
+                User userFromDb = _context.Users.Where(userToRead => userToRead.ID == userIdFromSession).First();
                 notification.User = userFromDb;
                 _context.Add(notification);
                 await _context.SaveChangesAsync();
-                return RedirectToAction(nameof(Index), new { id });
+                return RedirectToAction(nameof(Index), new { userIdFromSession });
+                //return Index(userIdFromSession);
             }
             return View(notification);
         }
 
         // GET: Notifications/Edit/5
-        public async Task<IActionResult> Edit(int? id)
-        {
-            if (id == null)
-            {
-                return NotFound();
-            }
+        //public async Task<IActionResult> Edit(int? id)
+        //{
+        //    if (id == null)
+        //    {
+        //        return NotFound();
+        //    }
 
-            var notification = await _context.Notifications.FindAsync(id);
-            if (notification == null)
-            {
-                return NotFound();
-            }
-            return View(notification);
-        }
+        //    var notification = await _context.Notifications.FindAsync(id);
+        //    if (notification == null)
+        //    {
+        //        return NotFound();
+        //    }
+        //    return View(notification);
+        //}
 
         // POST: Notifications/Edit/5
         // To protect from overposting attacks, please enable the specific properties you want to bind to, for 
         // more details see http://go.microsoft.com/fwlink/?LinkId=317598.
-        [HttpPost]
-        [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Edit(int id, [Bind("ID,BaseCurrency,EndCurrency,Value,AboverOrUnder")] Notification notification)
-        {
-            if (id != notification.ID)
-            {
-                return NotFound();
-            }
+        //[HttpPost]
+        //[ValidateAntiForgeryToken]
+        //public async Task<IActionResult> Edit(int id, [Bind("ID,BaseCurrency,EndCurrency,Value,AboverOrUnder")] Notification notification)
+        //{
+        //    if (id != notification.ID)
+        //    {
+        //        return NotFound();
+        //    }
 
-            if (ModelState.IsValid)
-            {
-                try
-                {
-                    _context.Update(notification);
-                    await _context.SaveChangesAsync();
-                }
-                catch (DbUpdateConcurrencyException)
-                {
-                    if (!NotificationExists(notification.ID))
-                    {
-                        return NotFound();
-                    }
-                    else
-                    {
-                        throw;
-                    }
-                }
-                return RedirectToAction(nameof(Index));
-            }
-            return View(notification);
-        }
+        //    if (ModelState.IsValid)
+        //    {
+        //        try
+        //        {
+        //            _context.Update(notification);
+        //            await _context.SaveChangesAsync();
+        //        }
+        //        catch (DbUpdateConcurrencyException)
+        //        {
+        //            if (!NotificationExists(notification.ID))
+        //            {
+        //                return NotFound();
+        //            }
+        //            else
+        //            {
+        //                throw;
+        //            }
+        //        }
+        //        return RedirectToAction(nameof(Index));
+        //    }
+        //    return View(notification);
+        //}
 
         // GET: Notifications/Delete/5
         public async Task<IActionResult> Delete(int? id)
         {
+            int userIdFromSession = Convert.ToInt32(HttpContext.Session.GetString("sessionUser"));
+
             if (id == null)
             {
                 return NotFound();
             }
 
-            var notification = await _context.Notifications
+            Notification notification = await _context.Notifications
                 .FirstOrDefaultAsync(m => m.ID == id);
             if (notification == null)
             {
                 return NotFound();
+            }
+
+            //Notification newNoti = _context.Notifications.First(c => c.User.ID == userIdFromSession);
+            //Course course = context.Courses.First(c => c.DepartmentID == 2);
+
+            if (userIdFromSession != notification.User.ID)
+            {
+                return RedirectToAction("Index", "Home");
             }
 
             return View(notification);
