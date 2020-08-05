@@ -55,17 +55,13 @@ namespace CurrencyExchange.Controllers
         // more details see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Create([Bind("ID,BaseCurrency,EndCurrency,Value,AboverOrUnder")] Notification notification, int id)
+        public async Task<IActionResult> Create([Bind("BaseCurrency,EndCurrency,Value,AboverOrUnder")] Notification notification, int id)
         {
             if (ModelState.IsValid)
             {
-                _context.Add(notification);
-                await _context.SaveChangesAsync();
-
                 User userFromDb = _context.Users.Where(userToRead => userToRead.ID == id).First();
                 notification.User = userFromDb;
-                _context.Entry(notification).Property("UserID").IsModified = true;
-
+                _context.Add(notification);
                 await _context.SaveChangesAsync();
                 return RedirectToAction(nameof(Index));
             }
