@@ -33,10 +33,12 @@ namespace CurrencyExchange.Services
         {
             List<Notification> notifications = new List<Notification>();
 
-            var context = new CurrencyExchangeContext(_serviceProvider.GetRequiredService<DbContextOptions<CurrencyExchangeContext>>());
-
-            //notifications = await context.Notifications.ToListAsync();
-
+            using (var context = new CurrencyExchangeContext(
+                    _serviceProvider.GetRequiredService<
+                        DbContextOptions<CurrencyExchangeContext>>()))
+            {
+                notifications = await context.Notifications.ToListAsync();
+            }
             System.Diagnostics.Debug.WriteLine("time tick");
             foreach (var n in notifications)
             {
