@@ -7,24 +7,38 @@ using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
 using CurrencyExchange.Data;
 using CurrencyExchange.Models;
+using RestSharp;
+using Newtonsoft.Json;
 
 namespace CurrencyExchange.Controllers
 {
     public class NotificationsController : Controller
     {
+        private readonly List<string> currencies;
         private readonly CurrencyExchangeContext _context;
 
         public NotificationsController(CurrencyExchangeContext context)
         {
+            currencies = getCurrencies();
             _context = context;
         }
 
         // GET: Notifications
         public async Task<IActionResult> Index(int id)
         {
+            //I have to show the actual value for each note 
             List<Notification> notifications = await _context.Notifications.Where(notificationsToRead => notificationsToRead.User.ID == id).ToListAsync();
+            foreach(var notification in notifications)
+            {
+                Conversion conversion = new Conversion();
+                conversion.BaseCurrency = notification.BaseCurrency;
+                conversion.EndCurrency = notification.EndCurrency;
+                conversion.Amount = notification.Value;
+                notification.ActualValue = GetRate(conversion);
+            }
             return View(notifications);
         }
+
 
         // GET: Notifications/Details/5
         public async Task<IActionResult> Details(int? id)
@@ -47,6 +61,7 @@ namespace CurrencyExchange.Controllers
         // GET: Notifications/Create
         public IActionResult Create()
         {
+            ViewBag.Currencies = currencies;
             return View();
         }
 
@@ -152,5 +167,36 @@ namespace CurrencyExchange.Controllers
         {
             return _context.Notifications.Any(e => e.ID == id);
         }
+
+
+
+        public decimal GetRate(Conversion conversion)
+        {
+            var client = new RestClient($"https://api.exchangeratesapi.io/latest?base={conversion.BaseCurrency}&symbols={conversion.EndCurrency}");
+            var request = new RestRequest(Method.GET);
+            IRestResponse response = client.Execute(request);
+            JsonObject deserializedResponse = JsonConvert.DeserializeObject<JsonObject>(response.Content);
+            JsonObject deserializedRates = JsonConvert.DeserializeObject<JsonObject>(deserializedResponse["rates"].ToString());
+            decimal rate = Convert.ToDecimal(deserializedRates[conversion.EndCurrency]);
+            return decimal.Round(rate, 3);
+        }
+
+
+        private List<string> getCurrencies()
+        {
+            var client = new RestClient("https://api.exchangeratesapi.io/latest");
+            var request = new RestRequest(Method.GET);
+            IRestResponse response = client.Execute(request);
+            //JsonDeserializer deserial = new JsonDeserializer();
+            //var JSONObj = deserial.Deserialize<Dictionary<string, string>>(response);
+            JsonObject ourlisting = JsonConvert.DeserializeObject<JsonObject>(response.Content);
+            JsonObject ourlisting2 = JsonConvert.DeserializeObject<JsonObject>(ourlisting["rates"].ToString());
+            List<string> currencyes = ourlisting2.Keys.ToList();
+            currencyes.Add("EUR");
+
+            return currencyes;
+        }
+
+
     }
 }

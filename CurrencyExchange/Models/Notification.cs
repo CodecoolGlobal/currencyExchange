@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
+using System.ComponentModel.DataAnnotations.Schema;
 using System.Linq;
 using System.Threading.Tasks;
 
@@ -21,5 +22,10 @@ namespace CurrencyExchange.Models
 
         [Required]
         public string AboverOrUnder { get; set; }
+
+        [NotMapped]
+        [Display(Name = "Actual Value")]
+        [DisplayFormat(DataFormatString = "{0:0.000}")]
+        public decimal ActualValue { get; set; }
     }
 }

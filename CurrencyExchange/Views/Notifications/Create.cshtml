@@ -13,14 +13,22 @@
         <form asp-action="Create" asp-route-id="@Convert.ToInt32(Context.Session.GetString("sessionUser"))">
             <div asp-validation-summary="ModelOnly" class="text-danger"></div>
             <div class="form-group">
-                <label asp-for="BaseCurrency" class="control-label"></label>
-                <input asp-for="BaseCurrency" class="form-control" />
-                <span asp-validation-for="BaseCurrency" class="text-danger"></span>
+                <label>Base Currency</label>
+                <select asp-for="BaseCurrency">
+                    @foreach (var value in @ViewBag.Currencies)
+                    {
+                        <option value="@value">@value</option>
+                    }
+                </select>
             </div>
             <div class="form-group">
-                <label asp-for="EndCurrency" class="control-label"></label>
-                <input asp-for="EndCurrency" class="form-control" />
-                <span asp-validation-for="EndCurrency" class="text-danger"></span>
+                <label>End Currency</label>
+                <select asp-for="EndCurrency">
+                    @foreach (var value in @ViewBag.Currencies)
+                    {
+                        <option value="@value">@value</option>
+                    }
+                </select>
             </div>
             <div class="form-group">
                 <label asp-for="Value" class="control-label"></label>
@@ -28,9 +36,10 @@
                 <span asp-validation-for="Value" class="text-danger"></span>
             </div>
             <div class="form-group">
-                <label asp-for="AboverOrUnder" class="control-label"></label>
-                <input asp-for="AboverOrUnder" class="form-control" />
-                <span asp-validation-for="AboverOrUnder" class="text-danger"></span>
+                <input asp-for="AboverOrUnder" type="radio" id="above" value="above">
+                <label for="above">Above</label><br>
+                <input asp-for="AboverOrUnder" type="radio" id="under" value="under">
+                <label for="under">Under</label><br>
             </div>
             <div class="form-group">
                 <input type="submit" value="Create" class="btn btn-primary" />
