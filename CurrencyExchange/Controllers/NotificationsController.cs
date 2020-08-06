@@ -10,6 +10,7 @@ using CurrencyExchange.Models;
 using Microsoft.AspNetCore.Http;
 using RestSharp;
 using Newtonsoft.Json;
+using CurrencyExchange.Services;
 
 namespace CurrencyExchange.Controllers
 {
@@ -20,23 +21,14 @@ namespace CurrencyExchange.Controllers
 
         public NotificationsController(CurrencyExchangeContext context)
         {
-            currencies = CurrencyApiFeatures.getCurrencies();
+            currencies = CurrencyApiService.getCurrencies();
             _context = context;
         }
 
         // GET: Notifications
         public async Task<IActionResult> Index(int id)
         {
-            //I have to show the actual value for each note 
-            List<Notification> notifications = await _context.Notifications.Where(notificationsToRead => notificationsToRead.User.ID == id).ToListAsync();
-            foreach(var notification in notifications)
-            {
-                Conversion conversion = new Conversion();
-                conversion.BaseCurrency = notification.BaseCurrency;
-                conversion.EndCurrency = notification.EndCurrency;
-                conversion.Amount = notification.Value;
-                notification.ActualValue = CurrencyApiFeatures.GetRate(conversion);
-            }
+            List<Notification> notifications = await NotificationService.GetNotificationsAsync(id);
             return View(notifications);
         }
 
@@ -81,6 +73,7 @@ namespace CurrencyExchange.Controllers
                 int userIdFromSession = Convert.ToInt32(HttpContext.Session.GetString("sessionUser"));
                 User userFromDb = _context.Users.Where(userToRead => userToRead.ID == userIdFromSession).First();
                 notification.User = userFromDb;
+                notification.EmailSent = false;
                 _context.Add(notification);
                 await _context.SaveChangesAsync();
                 return RedirectToAction(nameof(Index), new { userIdFromSession });
@@ -155,9 +148,6 @@ namespace CurrencyExchange.Controllers
             {
                 return NotFound();
             }
-
-            //Notification newNoti = _context.Notifications.First(c => c.User.ID == userIdFromSession);
-            //Course course = context.Courses.First(c => c.DepartmentID == 2);
 
             if (userIdFromSession != notification.User.ID)
             {

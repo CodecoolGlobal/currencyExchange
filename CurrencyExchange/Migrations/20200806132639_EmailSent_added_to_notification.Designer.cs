@@ -4,14 +4,16 @@ using CurrencyExchange.Data;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 namespace CurrencyExchange.Migrations
 {
     [DbContext(typeof(CurrencyExchangeContext))]
-    partial class CurrencyExchangeContextModelSnapshot : ModelSnapshot
+    [Migration("20200806132639_EmailSent_added_to_notification")]
+    partial class EmailSent_added_to_notification
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -26,7 +28,7 @@ namespace CurrencyExchange.Migrations
                         .HasColumnType("int")
                         .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
 
-                    b.Property<string>("AboveOrUnder")
+                    b.Property<string>("AboverOrUnder")
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
 

@@ -18,7 +18,6 @@ namespace CurrencyExchange.Controllers
     {
         private readonly ILogger<HomeController> _logger;
         private readonly List<string> currencies;
-        static int numMail = 1;
 
         public HomeController(ILogger<HomeController> logger)
         {
@@ -124,7 +123,6 @@ namespace CurrencyExchange.Controllers
             return View(new ErrorViewModel { RequestId = Activity.Current?.Id ?? HttpContext.TraceIdentifier });
         }
 
-
         private DateTime GetRandomDate()
         {
             Random random = new Random();
@@ -139,17 +137,6 @@ namespace CurrencyExchange.Controllers
             List<string> baseCurrencies = new List<string>() { "EUR", "USD", "CHF", "GBP" };
             int index = random.Next(0, baseCurrencies.Count - 1);
             return baseCurrencies[index];
-        }
-
-
-
-        [HttpPost]
-        public IActionResult SendMail(string address)
-        {
-            Email email = new Email(address, "david", "tema", "uzenet" + numMail);
-            numMail++;
-            MessageService.SendMail(email);
-            return Redirect("Index");
         }
     }
 }

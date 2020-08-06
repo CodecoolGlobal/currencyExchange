@@ -226,7 +226,6 @@ namespace CurrencyExchange.Controllers
             {
                 try
                 {
-                    //_context.Update(user);
                     _context.Entry(user).Property("Email").IsModified = true;
                     await _context.SaveChangesAsync();
                 }

@@ -36,9 +36,9 @@
                 <span asp-validation-for="Value" class="text-danger"></span>
             </div>
             <div class="form-group">
-                <input asp-for="AboverOrUnder" type="radio" id="above" value="above">
+                <input asp-for="AboveOrUnder" type="radio" id="above" value="above">
                 <label for="above">Above</label><br>
-                <input asp-for="AboverOrUnder" type="radio" id="under" value="under">
+                <input asp-for="AboveOrUnder" type="radio" id="under" value="under">
                 <label for="under">Under</label><br>
             </div>
             <div class="form-group">
@@ -48,7 +48,7 @@
     </div>
 </div>
 
-              @*asp-route-id="@Convert.ToInt32(Context.Session.GetString("sessionUser"))"*@
+@*asp-route-id="@Convert.ToInt32(Context.Session.GetString("sessionUser"))"*@
 <div>
     <a asp-action="Index">Back to List</a>
 </div>
