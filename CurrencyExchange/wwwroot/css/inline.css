@@ -1,0 +1,10 @@
+﻿#parentlist {
+    list-style: none;
+    white-space: nowrap;
+    margin-left:auto;
+    margin-right:auto;
+}
+
+    #parentlist > li {
+        display: inline-block;
+    }

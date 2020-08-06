@@ -17,20 +17,11 @@ namespace CurrencyExchange
         public static void Main(string[] args)
         {
             var host = CreateHostBuilder(args).Build();
-
-            //using (var scope = host.Services.CreateScope())
-            //{
-            //    var services = scope.ServiceProvider;
-            //    SetAdminRole.Initialize(services, 1006);
-            //}
-
-            //resorces mappa Dávidkától
-            MessageService service = new MessageService();
-
-
             var scope = host.Services.CreateScope();
             var services = scope.ServiceProvider;
+            MessageService.Initialize(services);
             NotificationService.Initialize(services);
+
             host.Run();
         }
 
