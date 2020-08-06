@@ -28,8 +28,17 @@ namespace CurrencyExchange.Services
             timer.Interval = 10000;
 
             timer.Elapsed += CheckNotifications;
+
+            bool TestEmailSending = true;
+
             timer.Enabled = false;
-            //timer.Start();
+
+            if (TestEmailSending)
+            {
+                timer.Enabled = true;
+                timer.Start();
+            }
+
         }
 
         private async static void CheckNotifications(object sender, EventArgs e)
@@ -38,15 +47,15 @@ namespace CurrencyExchange.Services
             List<Notification> notificationsToSend = new List<Notification>();
 
             //check which notifications meet the criteria given by the users
-            foreach(Notification notification in notifications)
+            foreach (Notification notification in notifications)
             {
                 if (notification.EmailSent == false &&
-                    notification.AboveOrUnder.Equals("above") && 
+                    notification.AboveOrUnder.Equals("above") &&
                     notification.ActualValue >= notification.Value)
                 {
                     notificationsToSend.Add(notification);
                 }
-                if(notification.EmailSent == false &&
+                if (notification.EmailSent == false &&
                     notification.AboveOrUnder.Equals("under") &&
                     notification.ActualValue <= notification.Value)
                 {
@@ -55,7 +64,7 @@ namespace CurrencyExchange.Services
             }
 
             //send those users an email about their notification
-            foreach(Notification notification in notificationsToSend)
+            foreach (Notification notification in notificationsToSend)
             {
                 MessageService.ComposeNotificationEmail(notification);
                 notification.EmailSent = true;

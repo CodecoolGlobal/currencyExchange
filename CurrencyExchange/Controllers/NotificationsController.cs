@@ -66,7 +66,7 @@ namespace CurrencyExchange.Controllers
         // more details see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Create([Bind("BaseCurrency,EndCurrency,Value,AboverOrUnder")] Notification notification)
+        public async Task<IActionResult> Create([Bind("BaseCurrency,EndCurrency,Value,AboveOrUnder")] Notification notification)
         {
             if (ModelState.IsValid)
             {
