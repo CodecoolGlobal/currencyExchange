@@ -18,11 +18,9 @@ namespace CurrencyExchange
         {
             var host = CreateHostBuilder(args).Build();
 
-            using (var scope = host.Services.CreateScope())
-            {
-                var services = scope.ServiceProvider;
-                NotificationService.Initialize(services);
-            }
+            var scope = host.Services.CreateScope();
+            var services = scope.ServiceProvider;
+            NotificationService.Initialize(services);
             host.Run();
         }
 
