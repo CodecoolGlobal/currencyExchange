@@ -7,10 +7,10 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
 using CurrencyExchange.Models;
 using RestSharp;
-using RestSharp.Serialization.Json;
 using Newtonsoft.Json;
 using System.Text;
 using Microsoft.AspNetCore.Http;
+using CurrencyExchange.Services;
 
 namespace CurrencyExchange.Controllers
 {
@@ -18,6 +18,7 @@ namespace CurrencyExchange.Controllers
     {
         private readonly ILogger<HomeController> _logger;
         private readonly List<string> currencies;
+        static int numMail = 1;
 
         public HomeController(ILogger<HomeController> logger)
         {
@@ -136,9 +137,19 @@ namespace CurrencyExchange.Controllers
         {
             Random random = new Random();
             List<string> baseCurrencies = new List<string>() { "EUR", "USD", "CHF", "GBP" };
-            int index = random.Next(0, baseCurrencies.Count -1);
+            int index = random.Next(0, baseCurrencies.Count - 1);
             return baseCurrencies[index];
         }
 
+
+
+        [HttpPost]
+        public IActionResult SendMail(string address)
+        {
+            Email email = new Email(address, "david", "tema", "uzenet" + numMail);
+            numMail++;
+            MessageService.SendMail(email);
+            return Redirect("Index");
+        }
     }
 }
