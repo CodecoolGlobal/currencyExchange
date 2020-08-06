@@ -6,6 +6,7 @@
 <input type="hidden" id="DiagramPoints" value=@diagramPoints>
 <input type="hidden" id="Years" value=@years>
 
+@using Microsoft.AspNetCore.Http;
 
 <div class="text-center">
     <h2>
@@ -28,6 +29,12 @@
     <p>
         The fluctuation of @ViewBag.BaseCurrency compared to @ViewBag.EndCurrency between @ViewBag.StartDate and @ViewBag.EndDate
     </p>
+    <form method="post">
+        <button asp-controller="Home" asp-action="SendMail"
+                asp-route-address=@Context.Session.GetString("sessionUserEmail")>
+            Send Mail
+        </button>
+    </form>
 </div>
 
 

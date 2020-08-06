@@ -37,6 +37,9 @@
                         else
                         {
                             <li class="nav-item">
+                                <a class="nav-link text-dark" asp-area="" asp-controller="Notifications" asp-action="Index" asp-route-id="@Context.Session.GetString("sessionUser")">My Notifications</a>
+                            </li>
+                            <li class="nav-item">
                                 <a class="nav-link text-dark" asp-area="" asp-controller="Users" asp-action="Details" asp-route-id="@Context.Session.GetString("sessionUser")">My Profile</a>
                             </li>
                             <li class="nav-item">

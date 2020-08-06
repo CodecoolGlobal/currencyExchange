@@ -26,6 +26,7 @@ _UpgradeReport_Files/
 bin/
 obj/
 TestResults/
+Resources/
 ###################
 # Web publish log #
 ###################
@@ -75,3 +76,4 @@ _[Ss]cripts
 *.ncrunchsolution
 *.dot[Cc]over
 dkms.conf
+login.txt

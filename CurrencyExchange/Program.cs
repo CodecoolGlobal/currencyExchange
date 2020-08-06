@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using CurrencyExchange.Models;
+using CurrencyExchange.Services;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
@@ -23,6 +24,13 @@ namespace CurrencyExchange
             //    SetAdminRole.Initialize(services, 1006);
             //}
 
+            //resorces mappa Dávidkától
+            MessageService service = new MessageService();
+
+
+            var scope = host.Services.CreateScope();
+            var services = scope.ServiceProvider;
+            NotificationService.Initialize(services);
             host.Run();
         }
 
