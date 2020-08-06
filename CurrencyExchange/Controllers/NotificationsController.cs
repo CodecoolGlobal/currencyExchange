@@ -8,6 +8,9 @@ using CurrencyExchange.Data;
 using CurrencyExchange.Models;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Routing;
+using RestSharp;
+using Newtonsoft.Json;
+using CurrencyExchange.Services;
 
 
 namespace CurrencyExchange.Controllers
@@ -27,15 +30,7 @@ namespace CurrencyExchange.Controllers
         // GET: Notifications
         public async Task<IActionResult> Index(int? id)
         {
-            List<Notification> notifications = await _context.Notifications.Where(notificationsToRead => notificationsToRead.User.ID == id).ToListAsync();
-            foreach (var notification in notifications)
-            {
-                Conversion conversion = new Conversion();
-                conversion.BaseCurrency = notification.BaseCurrency;
-                conversion.EndCurrency = notification.EndCurrency;
-                conversion.Amount = notification.Value;
-                notification.ActualValue = CurrencyApiService.GetRate(conversion);
-            }
+            List<Notification> notifications = await NotificationService.GetNotificationsAsync(id);
             return View(notifications);
         }
 
@@ -57,13 +52,14 @@ namespace CurrencyExchange.Controllers
         // more details see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Create([Bind("BaseCurrency,EndCurrency,Value,AboverOrUnder")] Notification notification)
+        public async Task<IActionResult> Create([Bind("BaseCurrency,EndCurrency,Value,AboveOrUnder")] Notification notification)
         {
             if (ModelState.IsValid)
             {
                 int userIdFromSession = Convert.ToInt32(HttpContext.Session.GetString("sessionUser"));
                 User userFromDb = _context.Users.Where(userToRead => userToRead.ID == userIdFromSession).First();
                 notification.User = userFromDb;
+                notification.EmailSent = false;
                 _context.Add(notification);
                 await _context.SaveChangesAsync();
                 return RedirectToAction("Index", new RouteValueDictionary(

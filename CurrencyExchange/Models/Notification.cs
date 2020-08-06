@@ -23,7 +23,9 @@ namespace CurrencyExchange.Models
 
         [Display(Name = "Above Or Under")]
         [Required]
-        public string AboverOrUnder { get; set; }
+        public string AboveOrUnder { get; set; }
+
+        public bool EmailSent { get; set; }
 
         [NotMapped]
         [Display(Name = "Actual Value")]

@@ -15,19 +15,20 @@ namespace CurrencyExchange.Services
         public static ImapClient client;
         private static string hostEmailAddress;
         private static string hostEmailPassword;
-        readonly string Path = "./Resources/login.txt";
-       
-        public MessageService()
+        private static readonly string Path = "./Resources/login.txt";
+        private static IServiceProvider _serviceProvider;
+
+        public static void Initialize(IServiceProvider serviceProvider)
         {
             string[] lines = System.IO.File.ReadAllLines(Path);
             hostEmailAddress = lines[0];
             hostEmailPassword = lines[1];
-
+            _serviceProvider = serviceProvider;
             client = new ImapClient();
             Connection(hostEmailAddress, hostEmailPassword);
         }
 
-        public static void Connection(string userName, string password)
+        private static void Connection(string userName, string password)
         {
             client.Connect("imap.gmail.com", 993, SecureSocketOptions.SslOnConnect);
             client.Authenticate(userName, password);
@@ -48,6 +49,26 @@ namespace CurrencyExchange.Services
             client.Authenticate(hostEmailAddress, hostEmailPassword);
             client.Send(message);
             client.Disconnect(true);
+        }
+
+        public static void ComposeNotificationEmail(Notification notification)
+        {
+            string BaseCurrency = notification.BaseCurrency;
+            string Endcurrency = notification.EndCurrency;
+            string Value = notification.Value.ToString();
+            string ActualValue = notification.ActualValue.ToString();
+            string AorU = notification.AboveOrUnder;
+
+            string UserName = notification.User.UserName;
+            string EmailAddress = notification.User.Email;
+
+            string emailBody = $"Dear {UserName}," +
+                $"" +
+                $"The value of 1 {BaseCurrency} ha reached your target of {Value} {Endcurrency} as it is currently at {ActualValue} {Endcurrency}." +
+                $"" +
+                $"Message automatically sent by CurrencyExchange (Made by Tamás Kruppa and Dávid Kalló)";
+            Email email = new Email(EmailAddress, UserName, "Currency Notification", emailBody);
+            SendMail(email);
         }
     }
 }
