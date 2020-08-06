@@ -102,7 +102,7 @@ namespace CurrencyExchange.Controllers
                     return View();
                 }
             }
-                return View();
+            return View();
         }
 
         // GET: Users/Logout
@@ -264,6 +264,48 @@ namespace CurrencyExchange.Controllers
                     //_context.Update(user);
                     _context.Entry(user).Property("UserName").IsModified = true;
                     await _context.SaveChangesAsync();
+                }
+                catch (DbUpdateConcurrencyException)
+                {
+                    if (!UserExists(user.ID))
+                    {
+                        return NotFound();
+                    }
+                    else
+                    {
+                        throw;
+                    }
+                }
+                return RedirectToAction(nameof(Index));
+            }
+            return View(user);
+        }
+
+
+        //Edit Password
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public async Task<IActionResult> ChangePassword(int id, [Bind("Password, ConfirmPassword, Email, ID")] User user, string OldPassword)
+        {
+
+            if (id != user.ID)
+            {
+                return NotFound();
+            }
+
+            if (ModelState["Password"].ValidationState.Equals(ModelValidationState.Valid))
+            {
+                try
+                {
+                    //régi jelszó ellenőrzése
+                    User userFromDb = _context.Users.Where(userToRead => userToRead.Email == user.Email).First();
+                    bool passwordIsValid = BCrypt.Net.BCrypt.Verify(OldPassword, userFromDb.Password);
+                    if (passwordIsValid && user.ConfirmPassword == user.Password)
+                    {
+                        userFromDb.Password = BCrypt.Net.BCrypt.HashPassword(user.Password);
+                        _context.Entry(userFromDb).Property("Password").IsModified = true;
+                        await _context.SaveChangesAsync();
+                    }
                 }
                 catch (DbUpdateConcurrencyException)
                 {
