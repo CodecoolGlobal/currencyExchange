@@ -23,6 +23,8 @@ namespace CurrencyExchange
             //    var services = scope.ServiceProvider;
             //    SetAdminRole.Initialize(services, 1006);
             //}
+
+            //resorces mappa Dávidkától
             MessageService service = new MessageService();
 
 
