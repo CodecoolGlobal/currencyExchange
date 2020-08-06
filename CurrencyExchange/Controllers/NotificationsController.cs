@@ -10,6 +10,7 @@ using CurrencyExchange.Models;
 using Microsoft.AspNetCore.Http;
 using RestSharp;
 using Newtonsoft.Json;
+using Microsoft.AspNetCore.Routing;
 
 namespace CurrencyExchange.Controllers
 {
@@ -20,7 +21,7 @@ namespace CurrencyExchange.Controllers
 
         public NotificationsController(CurrencyExchangeContext context)
         {
-            currencies = CurrencyApiFeatures.getCurrencies();
+            currencies = CurrencyApiService.getCurrencies();
             _context = context;
         }
 
@@ -29,13 +30,13 @@ namespace CurrencyExchange.Controllers
         {
             //I have to show the actual value for each note 
             List<Notification> notifications = await _context.Notifications.Where(notificationsToRead => notificationsToRead.User.ID == id).ToListAsync();
-            foreach(var notification in notifications)
+            foreach (var notification in notifications)
             {
                 Conversion conversion = new Conversion();
                 conversion.BaseCurrency = notification.BaseCurrency;
                 conversion.EndCurrency = notification.EndCurrency;
                 conversion.Amount = notification.Value;
-                notification.ActualValue = CurrencyApiFeatures.GetRate(conversion);
+                notification.ActualValue = CurrencyApiService.GetRate(conversion);
             }
             return View(notifications);
         }
@@ -83,7 +84,9 @@ namespace CurrencyExchange.Controllers
                 notification.User = userFromDb;
                 _context.Add(notification);
                 await _context.SaveChangesAsync();
-                return RedirectToAction(nameof(Index), new { userIdFromSession });
+                return RedirectToAction("Index", new RouteValueDictionary(
+                        new { controller = "Notifications", action = "Index", id = userIdFromSession })
+                    );
                 //return Index(userIdFromSession);
             }
             return View(notification);
