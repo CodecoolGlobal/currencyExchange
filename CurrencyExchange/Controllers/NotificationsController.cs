@@ -144,8 +144,7 @@ namespace CurrencyExchange.Controllers
                 return NotFound();
             }
 
-            Notification notification = await _context.Notifications
-                .FirstOrDefaultAsync(m => m.ID == id);
+            Notification notification = await _context.Notifications.Include(m => m.User).FirstOrDefaultAsync(m => m.ID == id);
             if (notification == null)
             {
                 return NotFound();
