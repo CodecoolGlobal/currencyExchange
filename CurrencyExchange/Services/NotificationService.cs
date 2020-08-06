@@ -42,7 +42,7 @@ namespace CurrencyExchange.Services
 
         private async static void CheckNotifications(object sender, EventArgs e)
         {
-            List<Notification> notifications = await GetNotificationsAsync(null);
+            List<Notification> notifications = await GetNotificationsAsync(null, true);
             List<Notification> notificationsToSend = new List<Notification>();
 
             //check which notifications meet the criteria given by the users
@@ -77,7 +77,7 @@ namespace CurrencyExchange.Services
             }
         }
 
-        public static async Task<List<Notification>> GetNotificationsAsync(int? id)
+        public static async Task<List<Notification>> GetNotificationsAsync(int? id, bool CurrencyNeeded)
         {
             List<Notification> notifications = new List<Notification>();
             using (var context = new CurrencyExchangeContext(
@@ -95,14 +95,17 @@ namespace CurrencyExchange.Services
                 }
             }
 
-            //I have to show the actual value for each note 
-            foreach (Notification notification in notifications)
+            //I have to show the actual value for each note
+            if (CurrencyNeeded)
             {
-                Conversion conversion = new Conversion();
-                conversion.BaseCurrency = notification.BaseCurrency;
-                conversion.EndCurrency = notification.EndCurrency;
-                conversion.Amount = notification.Value;
-                notification.ActualValue = CurrencyApiService.GetRate(conversion);
+                foreach (Notification notification in notifications)
+                {
+                    Conversion conversion = new Conversion();
+                    conversion.BaseCurrency = notification.BaseCurrency;
+                    conversion.EndCurrency = notification.EndCurrency;
+                    conversion.Amount = notification.Value;
+                    notification.ActualValue = CurrencyApiService.GetRate(conversion);
+                }
             }
             return notifications;
         }
