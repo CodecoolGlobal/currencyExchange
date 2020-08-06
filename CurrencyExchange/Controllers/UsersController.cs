@@ -8,6 +8,8 @@ using CurrencyExchange.Models;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc.ModelBinding;
 using Microsoft.Data.SqlClient;
+using System.Collections.Generic;
+using CurrencyExchange.Services;
 
 namespace CurrencyExchange.Controllers
 {
@@ -350,7 +352,12 @@ namespace CurrencyExchange.Controllers
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> DeleteConfirmed(int id)
         {
+            List<Notification> notifications = await NotificationService.GetNotificationsAsync(id, false);
             var user = await _context.Users.FindAsync(id);
+            foreach (Notification notification in notifications)
+            {
+                _context.Notifications.Remove(notification);
+            }
             _context.Users.Remove(user);
             await _context.SaveChangesAsync();
             return RedirectToAction(nameof(Index));
