@@ -1,7 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Threading.Tasks;
 using CurrencyExchange.Models;
 using Newtonsoft.Json;
 using RestSharp;
@@ -18,7 +17,7 @@ namespace CurrencyExchange.Services
             JsonObject deserializedResponse = JsonConvert.DeserializeObject<JsonObject>(response.Content);
             JsonObject deserializedRates = JsonConvert.DeserializeObject<JsonObject>(deserializedResponse["rates"].ToString());
             decimal rate = Convert.ToDecimal(deserializedRates[conversion.EndCurrency]);
-            
+
             return decimal.Round(rate, 3);
         }
 

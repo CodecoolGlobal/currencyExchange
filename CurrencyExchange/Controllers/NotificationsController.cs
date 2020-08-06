@@ -8,8 +8,6 @@ using CurrencyExchange.Data;
 using CurrencyExchange.Models;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Routing;
-using RestSharp;
-using Newtonsoft.Json;
 using CurrencyExchange.Services;
 
 

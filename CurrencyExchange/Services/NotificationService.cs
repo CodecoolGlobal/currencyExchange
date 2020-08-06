@@ -1,5 +1,4 @@
-﻿using CurrencyExchange.Controllers;
-using CurrencyExchange.Data;
+﻿using CurrencyExchange.Data;
 using CurrencyExchange.Models;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.DependencyInjection;
