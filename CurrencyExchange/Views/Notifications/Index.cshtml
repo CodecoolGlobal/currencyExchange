@@ -47,13 +47,13 @@
                     @Html.DisplayFor(modelItem => item.AboverOrUnder)
                 </td>
                 @*display actual currency value*@
-            <td>
-                @Html.DisplayFor(modelItem => item.ActualValue)
-            </td>
                 <td>
-                    <a asp-action="Edit" asp-route-id="@item.ID">Edit</a> |
-                    <a asp-action="Details" asp-route-id="@item.ID">Details</a> |
-                    <a asp-action="Delete" asp-route-id="@item.ID">Delete</a>
+                    @Html.DisplayFor(modelItem => item.ActualValue)
+                </td>
+                <td>
+                    <form asp-action="Delete" asp-route-id="@item.ID">
+                        <input type="submit" value="Delete" class="btn btn-danger" />
+                    </form>
                 </td>
             </tr>
         }
