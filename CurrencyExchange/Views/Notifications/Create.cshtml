@@ -12,38 +12,47 @@
     <div class="col-md-4">
         <form asp-action="Create">
             <div asp-validation-summary="ModelOnly" class="text-danger"></div>
-            <div class="form-group">
-                <label>Base Currency</label>
-                <select asp-for="BaseCurrency">
-                    @foreach (var value in @ViewBag.Currencies)
-                    {
-                        <option value="@value">@value</option>
-                    }
-                </select>
-            </div>
-            <div class="form-group">
-                <label>End Currency</label>
-                <select asp-for="EndCurrency">
-                    @foreach (var value in @ViewBag.Currencies)
-                    {
-                        <option value="@value">@value</option>
-                    }
-                </select>
-            </div>
-            <div class="form-group">
-                <label asp-for="Value" class="control-label"></label>
-                <input asp-for="Value" class="form-control" />
-                <span asp-validation-for="Value" class="text-danger"></span>
-            </div>
-            <div class="form-group">
-                <input asp-for="AboveOrUnder" type="radio" id="above" value="above">
-                <label for="above">Above</label><br>
-                <input asp-for="AboveOrUnder" type="radio" id="under" value="under">
-                <label for="under">Under</label><br>
-            </div>
-            <div class="form-group">
-                <input type="submit" value="Create" class="btn btn-primary" />
-            </div>
+                <ul id="parentlist">
+                    <li>
+                        <p>Please notify me when 1 </p>
+                    </li>
+                    <li>
+                        <select asp-for="EndCurrency">
+                            @foreach (var value in @ViewBag.Currencies)
+                            {
+                                <option value="@value">@value</option>
+                            }
+                        </select>
+                    </li>
+                    <li>
+                        <p> reaches </p>
+                    </li>
+                    <li>
+                        <input asp-for="Value" class="form-control" placeholder="value" />
+                        <span asp-validation-for="Value" class="text-danger"></span>
+                    </li>
+                    <li>
+                        <select asp-for="BaseCurrency">
+                            @foreach (var value in @ViewBag.Currencies)
+                            {
+                                <option value="@value">@value</option>
+                            }
+                        </select>
+
+                    </li>
+                    <li>
+                        <p> or </p>
+                    </li>
+                    <li>
+                        <input asp-for="AboveOrUnder" type="radio" id="above" value="above">
+                        <label for="above">Above</label><br>
+                        <input asp-for="AboveOrUnder" type="radio" id="under" value="under">
+                        <label for="under">Under</label><br>
+                    </li>
+                    <li>
+                        <input type="submit" value="Create" class="btn btn-primary" />
+                    </li>
+                </ul>
         </form>
     </div>
 </div>
