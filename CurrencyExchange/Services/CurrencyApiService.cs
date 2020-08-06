@@ -8,7 +8,7 @@ using RestSharp;
 
 namespace CurrencyExchange.Controllers
 {
-    public class CurrencyApiFeatures
+    public class CurrencyApiService
     {
         public static decimal GetRate(Conversion conversion)
         {

@@ -23,7 +23,7 @@ namespace CurrencyExchange.Controllers
         public HomeController(ILogger<HomeController> logger)
         {
             _logger = logger;
-            currencies = CurrencyApiFeatures.getCurrencies();
+            currencies = CurrencyApiService.getCurrencies();
         }
 
         public async Task<IActionResult> IndexAsync()
@@ -100,7 +100,7 @@ namespace CurrencyExchange.Controllers
         public IActionResult ExchangeRate(Conversion conversion)
         {
             ViewBag.Currencies = currencies;
-            ViewBag.Response = CurrencyApiFeatures.GetRate(conversion);
+            ViewBag.Response = CurrencyApiService.GetRate(conversion);
             return View();
         }
 
@@ -114,7 +114,7 @@ namespace CurrencyExchange.Controllers
         public IActionResult ConvertMoney(Conversion conversion)
         {
             ViewBag.Currencies = currencies;
-            ViewBag.Response = CurrencyApiFeatures.GetRate(conversion) * conversion.Amount;
+            ViewBag.Response = CurrencyApiService.GetRate(conversion) * conversion.Amount;
             return View(conversion);
         }
 
