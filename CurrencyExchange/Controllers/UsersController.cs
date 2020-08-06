@@ -27,6 +27,11 @@ namespace CurrencyExchange.Controllers
         //[Authorize]
         public async Task<IActionResult> Index()
         {
+            if (HttpContext.Session.GetString("sessionUserRole") == null)
+            {
+                return RedirectToAction("Index", "Home");
+            }
+
             if (HttpContext.Session.GetString("sessionUserRole").Equals("Admin"))
             {
                 return View(await _context.Users.ToListAsync());
@@ -40,21 +45,20 @@ namespace CurrencyExchange.Controllers
         // GET: Users/Details/5
         public async Task<IActionResult> Details(int? id)
         {
-            string userIdFromSession = HttpContext.Session.GetString("sessionUser");
-            if (id.Equals(Convert.ToInt32(userIdFromSession)))
+            if (id == null)
             {
-                if (id == null)
-                {
-                    return NotFound();
-                }
+                return NotFound();
+            }
 
+            int userIdFromSession = Convert.ToInt32(HttpContext.Session.GetString("sessionUser"));
+            if (id == userIdFromSession)
+            {
                 var user = await _context.Users
                     .FirstOrDefaultAsync(m => m.ID == id);
                 if (user == null)
                 {
                     return NotFound();
                 }
-
                 return View(user);
             }
             else
@@ -66,6 +70,10 @@ namespace CurrencyExchange.Controllers
         // GET: Users/Login
         public IActionResult Login()
         {
+            if (HttpContext.Session.GetString("sessionUser") != null)
+            {
+                return RedirectToAction("Index", "Home");
+            }
             return View();
         }
 
@@ -110,6 +118,10 @@ namespace CurrencyExchange.Controllers
         // GET: Users/Create
         public IActionResult Register()
         {
+            if (HttpContext.Session.GetString("sessionUser") != null)
+            {
+                return RedirectToAction("Index", "Home");
+            }
             return View();
         }
 
@@ -151,8 +163,8 @@ namespace CurrencyExchange.Controllers
                 return NotFound();
             }
 
-            string userIdFromSession = HttpContext.Session.GetString("sessionUser");
-            if (id.Equals(Convert.ToInt32(userIdFromSession)))
+            int userIdFromSession = Convert.ToInt32(HttpContext.Session.GetString("sessionUser"));
+            if (id == userIdFromSession)
             {
                 var user = await _context.Users.FindAsync(id);
                 if (user == null)
@@ -160,14 +172,11 @@ namespace CurrencyExchange.Controllers
                     return NotFound();
                 }
                 return View(user);
-
             }
             else
             {
                 return RedirectToAction("Index", "Home");
             }
-
-
         }
 
 
@@ -284,14 +293,18 @@ namespace CurrencyExchange.Controllers
                 return NotFound();
             }
 
-            var user = await _context.Users
-                .FirstOrDefaultAsync(m => m.ID == id);
-            if (user == null)
+            int userIdFromSession = Convert.ToInt32(HttpContext.Session.GetString("sessionUser"));
+            if (id == userIdFromSession)
             {
-                return NotFound();
+                var user = await _context.Users
+                .FirstOrDefaultAsync(m => m.ID == id);
+                if (user == null)
+                {
+                    return NotFound();
+                }
+                return View(user);
             }
-
-            return View(user);
+            return RedirectToAction("Index", "Home");
         }
 
         // POST: Users/Delete/5
