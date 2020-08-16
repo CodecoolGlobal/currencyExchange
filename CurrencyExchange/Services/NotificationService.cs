@@ -84,12 +84,23 @@ namespace CurrencyExchange.Services
             {
                 if (id == null)
                 {
-                    notifications = await context.Notifications.Include(m => m.User).ToListAsync();
+                    if (UnsentOnly)
+                    {
+                        notifications = await context.Notifications.Include(n => n.User)
+                            .Where(n => n.EmailSent == false)
+                            .ToListAsync();
+                    }
+                    else
+                    {
+                        notifications = await context.Notifications.Include(n => n.User)
+                            .ToListAsync();
+                    }
                 }
                 else
                 {
-                    notifications = await context.Notifications.Include(m => m.User).Where
-                        (notificationsToRead => notificationsToRead.User.ID == id && notificationsToRead.EmailSent == false).ToListAsync();
+                    notifications = await context.Notifications.Include(n => n.User)
+                       .Where(n => n.User.ID == id)
+                       .ToListAsync();
                 }
             }
 
