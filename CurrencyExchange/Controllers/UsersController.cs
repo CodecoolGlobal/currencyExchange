@@ -352,12 +352,12 @@ namespace CurrencyExchange.Controllers
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> DeleteConfirmed(int id)
         {
-            List<Notification> notifications = await NotificationService.GetNotificationsAsync(id, false);
-            var user = await _context.Users.FindAsync(id);
+            List<Notification> notifications = await NotificationService.GetNotificationsAsync(id, false, false);
             foreach (Notification notification in notifications)
             {
                 _context.Notifications.Remove(notification);
             }
+            var user = await _context.Users.FindAsync(id);
             _context.Users.Remove(user);
             await _context.SaveChangesAsync();
             return RedirectToAction(nameof(Index));
