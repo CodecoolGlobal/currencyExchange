@@ -370,8 +370,8 @@ namespace CurrencyExchange.Controllers
 
         private void Alert(Exception e)
         {
-            string InvalidColumn = "";
             string ExceptionMessage = e.InnerException.Message;
+            string InvalidColumn;
             if (ExceptionMessage.Contains("Email"))
             {
                 InvalidColumn = "Email Address";

@@ -20,7 +20,7 @@ namespace CurrencyExchange.Controllers
 
         public NotificationsController(CurrencyExchangeContext context)
         {
-            currencies = CurrencyApiService.getCurrencies();
+            currencies = CurrencyApiService.GetCurrencies();
             _context = context;
         }
 

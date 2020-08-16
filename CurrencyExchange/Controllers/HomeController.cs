@@ -22,7 +22,7 @@ namespace CurrencyExchange.Controllers
         public HomeController(ILogger<HomeController> logger)
         {
             _logger = logger;
-            currencies = CurrencyApiService.getCurrencies();
+            currencies = CurrencyApiService.GetCurrencies();
         }
 
         public async Task<IActionResult> IndexAsync()
