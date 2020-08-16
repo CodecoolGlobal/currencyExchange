@@ -20,7 +20,7 @@ namespace CurrencyExchange.Controllers
 
         public NotificationsController(CurrencyExchangeContext context)
         {
-            currencies = CurrencyApiService.getCurrencies();
+            currencies = CurrencyApiService.GetCurrencies();
             _context = context;
         }
 
@@ -28,7 +28,7 @@ namespace CurrencyExchange.Controllers
         // GET: Notifications
         public async Task<IActionResult> Index(int? id)
         {
-            List<Notification> notifications = await NotificationService.GetNotificationsAsync(id, true);
+            List<Notification> notifications = await NotificationService.GetNotificationsAsync(id, true, false);
             return View(notifications);
         }
 

@@ -42,20 +42,18 @@ namespace CurrencyExchange.Services
 
         private async static void CheckNotifications(object sender, EventArgs e)
         {
-            List<Notification> notifications = await GetNotificationsAsync(null, true);
+            List<Notification> notifications = await GetNotificationsAsync(null, true, true);
             List<Notification> notificationsToSend = new List<Notification>();
 
             //check which notifications meet the criteria given by the users
             foreach (Notification notification in notifications)
             {
-                if (notification.EmailSent == false &&
-                    notification.AboveOrUnder.Equals("above") &&
+                if (notification.AboveOrUnder.Equals("above") &&
                     notification.ActualValue >= notification.Value)
                 {
                     notificationsToSend.Add(notification);
                 }
-                if (notification.EmailSent == false &&
-                    notification.AboveOrUnder.Equals("under") &&
+                if (notification.AboveOrUnder.Equals("under") &&
                     notification.ActualValue <= notification.Value)
                 {
                     notificationsToSend.Add(notification);
@@ -77,7 +75,7 @@ namespace CurrencyExchange.Services
             }
         }
 
-        public static async Task<List<Notification>> GetNotificationsAsync(int? id, bool CurrencyNeeded)
+        public static async Task<List<Notification>> GetNotificationsAsync(int? id, bool CurrencyNeeded, bool UnsentOnly)
         {
             List<Notification> notifications = new List<Notification>();
             using (var context = new CurrencyExchangeContext(
@@ -86,12 +84,23 @@ namespace CurrencyExchange.Services
             {
                 if (id == null)
                 {
-                    notifications = await context.Notifications.Include(m => m.User).ToListAsync();
+                    if (UnsentOnly)
+                    {
+                        notifications = await context.Notifications.Include(n => n.User)
+                            .Where(n => n.EmailSent == false)
+                            .ToListAsync();
+                    }
+                    else
+                    {
+                        notifications = await context.Notifications.Include(n => n.User)
+                            .ToListAsync();
+                    }
                 }
                 else
                 {
-                    notifications = await context.Notifications.Include(m => m.User).Where
-                        (notificationsToRead => notificationsToRead.User.ID == id).ToListAsync();
+                    notifications = await context.Notifications.Include(n => n.User)
+                       .Where(n => n.User.ID == id)
+                       .ToListAsync();
                 }
             }
 

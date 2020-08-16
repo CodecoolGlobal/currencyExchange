@@ -21,7 +21,7 @@ namespace CurrencyExchange.Services
             return decimal.Round(rate, 3);
         }
 
-        public static List<string> getCurrencies()
+        public static List<string> GetCurrencies()
         {
             var client = new RestClient("https://api.exchangeratesapi.io/latest");
             var request = new RestRequest(Method.GET);
