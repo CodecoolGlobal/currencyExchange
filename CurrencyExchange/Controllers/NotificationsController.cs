@@ -28,8 +28,13 @@ namespace CurrencyExchange.Controllers
         // GET: Notifications
         public async Task<IActionResult> Index(int? id)
         {
-            List<Notification> notifications = await NotificationService.GetNotificationsAsync(id, true, false);
-            return View(notifications);
+            int userIdFromSession = Convert.ToInt32(HttpContext.Session.GetString("sessionUser"));
+            if (userIdFromSession == id)
+            {
+                List<Notification> notifications = await NotificationService.GetNotificationsAsync(id, true, false);
+                return View(notifications);
+            }
+            return RedirectToAction("Index", "Home");
         }
 
 

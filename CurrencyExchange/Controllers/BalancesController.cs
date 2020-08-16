@@ -8,46 +8,39 @@ using Microsoft.EntityFrameworkCore;
 using CurrencyExchange.Data;
 using CurrencyExchange.Models;
 using CurrencyExchange.Services;
+using Microsoft.AspNetCore.Http;
+using Microsoft.AspNetCore.Routing;
 
 namespace CurrencyExchange.Controllers
 {
     public class BalancesController : Controller
     {
+        private readonly List<string> currencies;
         private readonly CurrencyExchangeContext _context;
 
         public BalancesController(CurrencyExchangeContext context)
         {
+            currencies = CurrencyApiService.GetCurrencies();
             _context = context;
         }
+
 
         // GET: Balances
         public async Task<IActionResult> Index(int id)
         {
-            List<Balance> balances = await BalanceService.GetBalancesAsync(id);
-            return View(balances);
-        }
-
-        // GET: Balances/Details/5
-        public async Task<IActionResult> Details(int? id)
-        {
-            if (id == null)
+            int userIdFromSession = Convert.ToInt32(HttpContext.Session.GetString("sessionUser"));
+            if (userIdFromSession == id)
             {
-                return NotFound();
+                List<Balance> balances = await BalanceService.GetBalancesAsync(id);
+                return View(balances);
             }
-
-            var balance = await _context.Balances
-                .FirstOrDefaultAsync(m => m.ID == id);
-            if (balance == null)
-            {
-                return NotFound();
-            }
-
-            return View(balance);
+            return RedirectToAction("Index", "Home");
         }
 
         // GET: Balances/Create
         public IActionResult Create()
         {
+            ViewBag.Currencies = currencies;
             return View();
         }
 
@@ -56,64 +49,34 @@ namespace CurrencyExchange.Controllers
         // more details see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Create([Bind("Id,UserId,Currency,Amount")] Balance balance)
+        public async Task<IActionResult> Create([Bind("Currency,Amount")] Balance balance)
         {
             if (ModelState.IsValid)
             {
-                _context.Add(balance);
-                await _context.SaveChangesAsync();
-                return RedirectToAction(nameof(Index));
-            }
-            return View(balance);
-        }
+                int userIdFromSession = Convert.ToInt32(HttpContext.Session.GetString("sessionUser"));
+                User userFromDb = _context.Users.Where(userToRead => userToRead.ID == userIdFromSession).First();
 
-        // GET: Balances/Edit/5
-        public async Task<IActionResult> Edit(int? id)
-        {
-            if (id == null)
-            {
-                return NotFound();
-            }
-
-            var balance = await _context.Balances.FindAsync(id);
-            if (balance == null)
-            {
-                return NotFound();
-            }
-            return View(balance);
-        }
-
-        // POST: Balances/Edit/5
-        // To protect from overposting attacks, please enable the specific properties you want to bind to, for 
-        // more details see http://go.microsoft.com/fwlink/?LinkId=317598.
-        [HttpPost]
-        [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Edit(int id, [Bind("Id,UserId,Currency,Amount")] Balance balance)
-        {
-            if (id != balance.ID)
-            {
-                return NotFound();
-            }
-
-            if (ModelState.IsValid)
-            {
-                try
+                //check if user has a balance with the same currency
+                List<Balance> balances = await BalanceService.GetBalancesAsync(userIdFromSession);
+                bool AlreadyExists = false;
+                foreach (Balance b in balances)
                 {
-                    _context.Update(balance);
+                    if (b.Currency == balance.Currency)
+                    {
+                        BalanceService.EditBalance(b, balance.Amount);
+                        AlreadyExists = true;
+                        break;
+                    }
+                }
+                if (!AlreadyExists)
+                {
+                    balance.User = userFromDb;
+                    _context.Add(balance);
                     await _context.SaveChangesAsync();
                 }
-                catch (DbUpdateConcurrencyException)
-                {
-                    if (!BalanceExists(balance.ID))
-                    {
-                        return NotFound();
-                    }
-                    else
-                    {
-                        throw;
-                    }
-                }
-                return RedirectToAction(nameof(Index));
+                return RedirectToAction("Index", new RouteValueDictionary(
+                       new { controller = "Balances", action = "Index", id = userIdFromSession })
+                   );
             }
             return View(balance);
         }

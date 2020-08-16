@@ -25,10 +25,22 @@ namespace CurrencyExchange.Services
                         DbContextOptions<CurrencyExchangeContext>>()))
             {
                 balances = await context.Balances.Include(b => b.User)
-                    .Where(b => b.ID == id)
+                    .Where(b => b.User.ID == id)
                     .ToListAsync();
             }
             return balances;
+        }
+
+        public static async void EditBalance(Balance balance, int amount)
+        {
+            balance.Amount += amount;
+            using (var context = new CurrencyExchangeContext(
+                    _serviceProvider.GetRequiredService<
+                        DbContextOptions<CurrencyExchangeContext>>()))
+            {
+                context.Entry(balance).Property("Amount").IsModified = true;
+                await context.SaveChangesAsync();
+            }
         }
     }
 }
