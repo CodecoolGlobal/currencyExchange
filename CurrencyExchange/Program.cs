@@ -14,6 +14,7 @@ namespace CurrencyExchange
             var services = scope.ServiceProvider;
             MessageService.Initialize();
             NotificationService.Initialize(services);
+            BalanceService.Initialize(services);
 
             host.Run();
         }

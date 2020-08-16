@@ -24,5 +24,6 @@ namespace CurrencyExchange.Data
 
         public DbSet<User> Users { get; set; }
         public DbSet<Notification> Notifications { get; set; }
+        public DbSet<Balance> Balances { get; set; }
     }
 }
