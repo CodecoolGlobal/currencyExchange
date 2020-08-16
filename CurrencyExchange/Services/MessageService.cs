@@ -1,9 +1,7 @@
 ﻿using CurrencyExchange.Models;
 using MailKit.Net.Imap;
 using MailKit.Net.Smtp;
-using MailKit.Security;
 using MimeKit;
-using System;
 
 namespace CurrencyExchange.Services
 {
@@ -13,22 +11,13 @@ namespace CurrencyExchange.Services
         private static string hostEmailAddress;
         private static string hostEmailPassword;
         private static readonly string Path = "./Resources/login.txt";
-        private static IServiceProvider _serviceProvider;
 
-        public static void Initialize(IServiceProvider serviceProvider)
+        public static void Initialize()
         {
             string[] lines = System.IO.File.ReadAllLines(Path);
             hostEmailAddress = lines[0];
             hostEmailPassword = lines[1];
-            _serviceProvider = serviceProvider;
             client = new ImapClient();
-            Connection(hostEmailAddress, hostEmailPassword);
-        }
-
-        private static void Connection(string userName, string password)
-        {
-            client.Connect("imap.gmail.com", 993, SecureSocketOptions.SslOnConnect);
-            client.Authenticate(userName, password);
         }
 
         public static void SendMail(Email email)
@@ -38,7 +27,7 @@ namespace CurrencyExchange.Services
             message.From.Add(new MailboxAddress("Currency Exchange", hostEmailAddress));
             message.To.Add(new MailboxAddress(email.RecipientUserName, email.RecipientEmail));
             message.Subject = email.Subject;
-            bodyBuilder.HtmlBody = email.Body;
+            bodyBuilder.TextBody = email.Body;
             message.Body = bodyBuilder.ToMessageBody();
             SmtpClient client = new SmtpClient();
             client.ServerCertificateValidationCallback = (s, c, h, e) => true;
@@ -54,15 +43,14 @@ namespace CurrencyExchange.Services
             string Endcurrency = notification.EndCurrency;
             string Value = notification.Value.ToString();
             string ActualValue = notification.ActualValue.ToString();
-            string AorU = notification.AboveOrUnder;
 
             string UserName = notification.User.UserName;
             string EmailAddress = notification.User.Email;
 
-            string emailBody = $"Dear {UserName}," +
-                $"" +
-                $"The value of 1 {BaseCurrency} ha reached your target of {Value} {Endcurrency} as it is currently at {ActualValue} {Endcurrency}." +
-                $"" +
+            string emailBody = $"Dear {UserName}, \n" +
+                $"\n" +
+                $"The value of 1 {BaseCurrency} ha reached your target of {Value} {Endcurrency} as it is currently at {ActualValue} {Endcurrency}.\n" +
+                $"\n" +
                 $"Message automatically sent by CurrencyExchange (Made by Tamás Kruppa and Dávid Kalló)";
             Email email = new Email(EmailAddress, UserName, "Currency Notification", emailBody);
             SendMail(email);
