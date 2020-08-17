@@ -11,8 +11,12 @@
 
     @using Microsoft.AspNetCore.Http;
     @model CurrencyExchange.Models.Conversion
+
 </head>
 <body>
+    @{
+        ViewBag.currencies = TempData["Currencies"];
+    }
     <header>
         <nav class="navbar navbar-expand-sm navbar-toggleable-sm navbar-light bg-white border-bottom box-shadow mb-3">
             <div class="container">
@@ -89,7 +93,7 @@
                 <p>
                     <label>Base Currency</label>
                     <select id="baseC">
-                        @foreach (var value in @ViewBag.Currencies)
+                        @foreach (var value in ViewBag.currencies)
                         {
                             <option value="@value">@value</option>
                         }
@@ -98,7 +102,7 @@
                 <p>
                     <label>End Currency</label>
                     <select id="endC">
-                        @foreach (var value in @ViewBag.Currencies)
+                        @foreach (var value in ViewBag.currencies)
                         {
                             <option value="@value">@value</option>
                         }

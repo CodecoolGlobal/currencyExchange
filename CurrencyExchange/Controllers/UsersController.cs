@@ -16,10 +16,12 @@ namespace CurrencyExchange.Controllers
     public class UsersController : Controller
     {
         private readonly CurrencyExchangeContext _context;
+        private readonly List<string> currencies;
 
         public UsersController(CurrencyExchangeContext context)
         {
             _context = context;
+            currencies = CurrencyApiService.GetCurrencies();
         }
 
         // GET: Users

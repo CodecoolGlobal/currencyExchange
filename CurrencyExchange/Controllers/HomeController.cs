@@ -41,6 +41,7 @@ namespace CurrencyExchange.Controllers
             {
                 ViewData["Response"] = TempData["Response"];
             }
+            TempData["Currencies"] = currencies;
             ViewBag.Currencies = currencies;
             DateTime startDate = GetRandomDate();
             DateTime endDate = GetRandomDate();
