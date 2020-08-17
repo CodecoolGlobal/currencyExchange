@@ -84,7 +84,8 @@ namespace CurrencyExchange.Controllers
             {
                 user.ConfirmPassword = user.Password;
             }
-            if (ModelState["Email"].ValidationState.Equals(ModelValidationState.Valid) && ModelState["Password"].ValidationState.Equals(ModelValidationState.Valid))
+            if (ModelState["Email"].ValidationState.Equals(ModelValidationState.Valid) &&
+                ModelState["Password"].ValidationState.Equals(ModelValidationState.Valid))
             {
 
                 //if (ModelState.IsValid)

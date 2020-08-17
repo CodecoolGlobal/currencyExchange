@@ -13,6 +13,7 @@ namespace CurrencyExchange.Models
         public User Sender { get; set; }
 
         [Required]
+        [DataType(DataType.EmailAddress), Display(Name = "Email Address")]
         public User Recipient { get; set; }
         [Required]
         public string Currency { get; set; }

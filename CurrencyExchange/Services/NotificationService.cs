@@ -28,7 +28,7 @@ namespace CurrencyExchange.Services
 
             timer.Elapsed += CheckNotifications;
 
-            bool TestEmailSending = true;
+            bool TestEmailSending = false;
 
             timer.Enabled = false;
 
