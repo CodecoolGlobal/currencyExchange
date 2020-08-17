@@ -63,12 +63,12 @@ namespace CurrencyExchange.Services
             string Amount = transaction.Amount.ToString();
             string SenderUserName = transaction.Sender.UserName;
             string SenderEmailAddress = transaction.Sender.Email;
-            string RecipientUserName = transaction.Sender.UserName;
+            string RecipientUserName = transaction.Recipient.UserName;
             string RecipientEmailAddress = transaction.Recipient.Email;
 
             string SenderEmailBody = $"Dear {SenderUserName}, \n" +
                 $"\n" +
-                $"You have succesfully sent {Amount} {Currency} to {RecipientUserName}!" +
+                $"You have succesfully sent {Amount} {Currency} to {RecipientUserName}! \n" +
                 $"\n" +
                 $"Message automatically sent by CurrencyExchange (Made by Tamás Kruppa and Dávid Kalló)";
 
@@ -77,7 +77,7 @@ namespace CurrencyExchange.Services
 
             string RecipientEmailBody = $"Dear {RecipientUserName}, \n" +
                $"\n" +
-               $"{SenderUserName} has sent you {Amount} {Currency}!" +
+               $"{SenderUserName} has sent you {Amount} {Currency}! \n" +
                $"\n" +
                $"Message automatically sent by CurrencyExchange (Made by Tamás Kruppa and Dávid Kalló)";
 

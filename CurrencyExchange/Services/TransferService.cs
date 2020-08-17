@@ -17,25 +17,25 @@ namespace CurrencyExchange.Services
             _serviceProvider = serviceProvider;
         }
 
-        public static void SendMoney(int senderId, int recipientId, string currency, int amount)
+        public static void SendMoney(Transaction transaction)
         {
             using (var context = new CurrencyExchangeContext(
                     _serviceProvider.GetRequiredService<
                         DbContextOptions<CurrencyExchangeContext>>()))
             {
                 Balance senderBalance = context.Balances.Include(b => b.User)
-                    .Where(b => b.User.ID == senderId)
-                    .Where(b => b.Currency == currency).First();
-                BalanceService.EditBalance(senderBalance, amount * -1);
+                    .Where(b => b.User.ID == transaction.Sender.ID)
+                    .Where(b => b.Currency == transaction.Currency).First();
+                BalanceService.EditBalance(senderBalance, transaction.Amount * -1);
 
                 Balance recipientBalance = context.Balances.Include(b => b.User)
-                    .Where(b => b.User.ID == recipientId)
-                    .Where(b => b.Currency == currency).First();
-                BalanceService.EditBalance(recipientBalance, amount);
+                    .Where(b => b.User.ID == transaction.Recipient.ID)
+                    .Where(b => b.Currency == transaction.Currency).First();
+                BalanceService.EditBalance(recipientBalance, transaction.Amount);
             }
 
             //send email to both parties
-            MessageService.ComposeTransactionEmail(new Transaction());
+            MessageService.ComposeTransactionEmail(transaction);
         }
     }
 }
