@@ -1,8 +1,8 @@
-﻿var dat = document.getElementById('DiagramPoints').value;
-var years = document.getElementById('Years').value;
+﻿let dat = document.getElementById('DiagramPoints').value;
+let years = document.getElementById('Years').value;
 
-var chart = document.getElementById("lineChart");
-var data = {
+let chart = document.getElementById("lineChart");
+let diagramData = {
     labels: years.split(","),
     datasets: [
         {
@@ -15,9 +15,9 @@ var data = {
     ]
 }
 
-var lineChart = new Chart(chart,
+let lineChart = new Chart(chart,
     {
         type: 'line',
-        data: data,
+        data: diagramData,
     }
 );

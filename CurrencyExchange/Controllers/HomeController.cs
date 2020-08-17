@@ -104,11 +104,11 @@ namespace CurrencyExchange.Controllers
             return View();
         }
 
-        //public IActionResult ExchangeRate()
-        //{
-        //    ViewBag.Currencies = currencies;
-        //    return View();
-        //}
+        public IActionResult ExchangeRate()
+        {
+            ViewBag.Currencies = currencies;
+            return View();
+        }
 
 
         public class Resp
@@ -120,16 +120,26 @@ namespace CurrencyExchange.Controllers
             public string Name { get; set; }
         }
 
-  
-        public IActionResult ExchangeRate(Conversion conversion)
+        public class DumConv
         {
+            public string BaseCurrency { get; set; }
+            public string EndCurrency { get; set; }
+        }
+
+        [HttpPost]
+        public JsonResult ExchangeRate([FromBody] DumConv conv)
+        {
+            Conversion conversion = new Conversion();
+            conversion.BaseCurrency = conv.BaseCurrency;
+            conversion.EndCurrency = conv.EndCurrency;
             ViewBag.Currencies = currencies;
             String response = CurrencyApiService.GetRate(conversion).ToString();
             Resp resp = new Resp(response);
-            string stringData = System.Text.Json.JsonSerializer.Serialize(resp);
-            //TempData["Response"] = response;
-            return Json(resp);
-            //return RedirectToAction("Index", "Home");
+            //string stringData = System.Text.Json.JsonSerializer.Serialize(resp);
+            TempData["Response"] = response;
+            string getThis = Json(new { Result = response, System.Web.Mvc.JsonRequestBehavior.AllowGet }).ToString();
+            return Json(new { Result = response, System.Web.Mvc.JsonRequestBehavior.AllowGet });
+
         }
 
         public IActionResult ConvertMoney()

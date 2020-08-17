@@ -85,10 +85,10 @@
                 </p>
 
             }
-            <form asp-action="ExchangeRate" method="post">
+            <div>
                 <p>
                     <label>Base Currency</label>
-                    <select asp-for="BaseCurrency" id="baseC">
+                    <select id="baseC">
                         @foreach (var value in @ViewBag.Currencies)
                         {
                             <option value="@value">@value</option>
@@ -97,7 +97,7 @@
                 </p>
                 <p>
                     <label>End Currency</label>
-                    <select asp-for="EndCurrency" id="endC">
+                    <select id="endC">
                         @foreach (var value in @ViewBag.Currencies)
                         {
                             <option value="@value">@value</option>
@@ -105,9 +105,49 @@
                     </select>
                 </p>
                 @*<input type="submit" value="send" />*@
-                <button onclick="LoadData()"> GO JAVASCRIPT GO!</button>
-            </form>
+                <button id="exchangeButton" onclick="loadData()"> GO JAVASCRIPT GO!</button>
+            </div>
         </div>
+
+
+
+        @*jqueryyyyyyy*@
+
+        <script type="text/javascript">
+
+            function loadData() {
+
+                //alert("");
+                var conv = new Object();
+                conv.BaseCurrency = $('#baseC').val();
+                conv.EndCurrency = $('#endC').val();
+
+                $("#ConvertResolution tr").remove();
+                if (conv != null) {
+                    $.ajax({
+                        type: "POST",
+                        url: '@Url.Action("ExchangeRate")',
+                        data: JSON.stringify(conv),
+                        contentType: "application/json; charset=utf-8",
+                        dataType: "json",
+                        success: function (response) {
+                            if (response != null) {
+                                console.log(response.result);
+                                var row = "<tr>"
+                                        + "<td class='prtoducttd'>" + response.result + "</td>"
+                                        + "</tr>";
+                                $('#ConvertResolution').append(row);
+
+
+                            }
+                        },
+                        error: function () {
+                            alert("Error while inserting data");
+                        }
+                    })
+                }
+            };
+        </script>
 
         @*convert money*@
 
