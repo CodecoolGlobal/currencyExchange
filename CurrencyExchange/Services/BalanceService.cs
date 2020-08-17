@@ -45,11 +45,16 @@ namespace CurrencyExchange.Services
 
         public static async void AddNewBalance(Balance balance)
         {
+            User user = balance.User;
+            balance.User = null;
             using (var context = new CurrencyExchangeContext(
                     _serviceProvider.GetRequiredService<
                         DbContextOptions<CurrencyExchangeContext>>()))
             {
                 context.Balances.Add(balance);
+                await context.SaveChangesAsync();
+                balance.User = user;
+                context.Entry(balance).Reference("User").IsModified = true;
                 await context.SaveChangesAsync();
             }
         }
