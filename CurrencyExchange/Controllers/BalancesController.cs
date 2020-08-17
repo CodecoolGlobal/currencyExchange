@@ -71,8 +71,9 @@ namespace CurrencyExchange.Controllers
                 if (!AlreadyExists)
                 {
                     balance.User = userFromDb;
-                    _context.Add(balance);
+                    _context.Balances.Add(balance);
                     await _context.SaveChangesAsync();
+                    //BalanceService.AddNewBalance(balance);
                 }
                 return RedirectToAction("Index", new RouteValueDictionary(
                        new { controller = "Balances", action = "Index", id = userIdFromSession })

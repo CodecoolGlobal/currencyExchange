@@ -42,5 +42,16 @@ namespace CurrencyExchange.Services
                 await context.SaveChangesAsync();
             }
         }
+
+        public static async void AddNewBalance(Balance balance)
+        {
+            using (var context = new CurrencyExchangeContext(
+                    _serviceProvider.GetRequiredService<
+                        DbContextOptions<CurrencyExchangeContext>>()))
+            {
+                context.Balances.Add(balance);
+                await context.SaveChangesAsync();
+            }
+        }
     }
 }

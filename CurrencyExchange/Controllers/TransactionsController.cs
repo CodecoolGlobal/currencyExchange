@@ -10,6 +10,7 @@ using CurrencyExchange.Models;
 using Microsoft.AspNetCore.Http;
 using CurrencyExchange.Services;
 using Microsoft.AspNetCore.Mvc.ModelBinding;
+using Microsoft.AspNetCore.Routing;
 
 namespace CurrencyExchange.Controllers
 {
@@ -25,9 +26,15 @@ namespace CurrencyExchange.Controllers
         }
 
         // GET: Transactions
-        public async Task<IActionResult> Index()
+        public async Task<IActionResult> Index(int? id)
         {
-            return View(await _context.Transactions.ToListAsync());
+            int userIdFromSession = Convert.ToInt32(HttpContext.Session.GetString("sessionUser"));
+            if (userIdFromSession == id)
+            {
+                List<Transaction> transactions = await TransferService.GetTransactionsAsync(id);
+                return View(transactions);
+            }
+            return RedirectToAction("Index", "Home");
         }
 
         // GET: Transactions/Details/5
@@ -78,10 +85,13 @@ namespace CurrencyExchange.Controllers
                 int userIdFromSession = Convert.ToInt32(HttpContext.Session.GetString("sessionUser"));
                 User sender = _context.Users.Where(u => u.ID == userIdFromSession).First();
                 transaction.Sender = sender;
+                transaction.Date = DateTime.Now;
                 _context.Add(transaction);
                 await _context.SaveChangesAsync();
                 TransferService.SendMoney(transaction);
-                return RedirectToAction(nameof(Index));
+                return RedirectToAction("Index", new RouteValueDictionary(
+                         new { controller = "Transactions", action = "Index", id = userIdFromSession })
+                     );
             }
             return View(transaction);
         }

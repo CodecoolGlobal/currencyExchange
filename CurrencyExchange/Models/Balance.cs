@@ -10,7 +10,7 @@ namespace CurrencyExchange.Models
     public class Balance
     {
         public int ID { get; set; }
-        public User User { get; set; }
+        public virtual User User { get; set; }
 
         [Required]
         public string Currency { get; set; }
