@@ -28,72 +28,17 @@ namespace CurrencyExchange.Controllers
 
         public async Task<IActionResult> IndexAsync()
         {
+            if(TempData["ConvertResponse"] != null)
+            {
+                ViewData["ConvertResponse"] = TempData["ConvertResponse"];
+                ViewData["Amount"] = TempData["Amount"];
+                ViewData["BaseCurrency"] = TempData["BaseCurrency"];
+                ViewData["EndCurrency"] = TempData["EndCurrency"];
+            }
             if (TempData["Response"] != null)
             {
                 ViewData["Response"] = TempData["Response"];
             }
-            ViewBag.Currencies = currencies;
-            DateTime startDate = GetRandomDate();
-            DateTime endDate = GetRandomDate();
-            while (startDate > endDate)
-            {
-                endDate = GetRandomDate();
-            }
-            string strStartDate = startDate.ToString("yyyy-MM-dd");
-            string strEndDate = endDate.ToString("yyyy-MM-dd");
-            string baseCurrency = GetRandomCurrency();
-            string endCurrency = "HUF";
-
-            var client = new RestClient($"https://api.exchangeratesapi.io/history?start_at={strStartDate}&end_at={strEndDate}&base={baseCurrency}&symbols={endCurrency}");
-            var request = new RestRequest(Method.GET);
-            IRestResponse response = await client.ExecuteAsync(request);
-
-            JsonObject deserializedResponse = JsonConvert.DeserializeObject<JsonObject>(response.Content);
-            JsonObject deserializedRates = JsonConvert.DeserializeObject<JsonObject>(deserializedResponse["rates"].ToString());
-            var sortedRatesByDate = deserializedRates.OrderBy(d => d.Key).ToList();
-
-            //get years and belonging points
-            HashSet<string> years = new HashSet<string>();
-            StringBuilder yearsString = new StringBuilder();
-            StringBuilder DataPoints = new StringBuilder();
-
-            //get selected points and convert tham into a string(we want to pass tham to javascript) 
-            foreach (var item in sortedRatesByDate)
-            {
-                if (!years.Contains(item.Key.Substring(0, 7)))
-                {
-                    var values = JsonConvert.DeserializeObject<Dictionary<string, decimal>>(item.Value.ToString());
-                    foreach (var value in values.Values)
-                    {
-                        DataPoints.Append(Convert.ToDecimal(value).ToString() + "/");
-                    }
-                    years.Add(item.Key.Substring(0, 7));
-                }
-                else { continue; }
-            }
-
-            //convert selected years into a string
-            foreach (var yeartring in years)
-            {
-                yearsString.Append(yeartring + ",");
-            }
-
-            //selected years in a correct format for javascript
-            ViewBag.Years = yearsString.ToString().Substring(0, yearsString.ToString().Length - 1);
-            //selected points in a correct format for javascript
-            ViewBag.Data = DataPoints.ToString().Substring(0, DataPoints.ToString().Length - 1).Replace(",", ".");
-
-            ViewBag.StartDate = strStartDate;
-            ViewBag.EndDate = strEndDate;
-            ViewBag.BaseCurrency = baseCurrency;
-            ViewBag.EndCurrency = endCurrency;
-            return View();
-        }
-
-
-        public async Task<IActionResult> Index2Async(Conversion conver)
-        {
-            ViewBag.Response = CurrencyApiService.GetRate(conver);
             ViewBag.Currencies = currencies;
             DateTime startDate = GetRandomDate();
             DateTime endDate = GetRandomDate();
@@ -181,8 +126,11 @@ namespace CurrencyExchange.Controllers
         public IActionResult ConvertMoney(Conversion conversion)
         {
             ViewBag.Currencies = currencies;
-            ViewBag.Response = CurrencyApiService.GetRate(conversion) * conversion.Amount;
-            return View(conversion);
+            TempData["ConvertResponse"] = (CurrencyApiService.GetRate(conversion) * conversion.Amount).ToString();
+            TempData["Amount"] = conversion.Amount.ToString();
+            TempData["BaseCurrency"] = conversion.BaseCurrency.ToString();
+            TempData["EndCurrency"] = conversion.EndCurrency.ToString();
+            return RedirectToAction("Index", "Home");
         }
 
         [ResponseCache(Duration = 0, Location = ResponseCacheLocation.None, NoStore = true)]
