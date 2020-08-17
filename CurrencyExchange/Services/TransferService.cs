@@ -35,7 +35,7 @@ namespace CurrencyExchange.Services
             }
 
             //send email to both parties
-            MessageService.ComposeTransactionEmail(transaction);
+            MessageService.ComposeTransactionEmail(new Transaction());
         }
     }
 }
