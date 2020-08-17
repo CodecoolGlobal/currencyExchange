@@ -12,6 +12,8 @@ using System.Text;
 using Microsoft.AspNetCore.Http;
 using CurrencyExchange.Services;
 using Microsoft.AspNetCore.Routing;
+using System.Text.Json;
+using System.Text.Json.Serialization;
 
 namespace CurrencyExchange.Controllers
 {
@@ -102,18 +104,32 @@ namespace CurrencyExchange.Controllers
             return View();
         }
 
-        public IActionResult ExchangeRate()
+        //public IActionResult ExchangeRate()
+        //{
+        //    ViewBag.Currencies = currencies;
+        //    return View();
+        //}
+
+
+        public class Resp
         {
-            ViewBag.Currencies = currencies;
-            return View();
+            public Resp(string name)
+            {
+                Name = name;
+            }
+            public string Name { get; set; }
         }
 
-        [HttpPost]
+  
         public IActionResult ExchangeRate(Conversion conversion)
         {
             ViewBag.Currencies = currencies;
-            TempData["Response"] = CurrencyApiService.GetRate(conversion).ToString();
-            return RedirectToAction("Index", "Home");
+            String response = CurrencyApiService.GetRate(conversion).ToString();
+            Resp resp = new Resp(response);
+            string stringData = System.Text.Json.JsonSerializer.Serialize(resp);
+            //TempData["Response"] = response;
+            return Json(resp);
+            //return RedirectToAction("Index", "Home");
         }
 
         public IActionResult ConvertMoney()

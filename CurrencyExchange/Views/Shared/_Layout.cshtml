@@ -70,80 +70,77 @@
 
 
     @*sidenav*@
-<div id="mySidenav" class="sidenav">
+    <div id="mySidenav" class="sidenav">
 
-    @*exchangerate*@
-    <label>Exchange rate</label>
-    <div class="text-center">
-        @if (ViewData["Response"] != null)
-        {
-            <p>
-                @ViewData["Response"]
-            </p>
-        }
-        <form asp-action="ExchangeRate" method="post">
-            @*<p>
-                    <label>Start Date</label>
-                    <input asp-for="StartDate" value="2020.06.01"/>
+        @*exchangerate*@
+        <label>Exchange rate</label>
+        <div class="text-center">
+
+            <h3 id="ConvertResolution"></h3>
+
+            @if (ViewData["Response"] != null)
+            {
+                <p>
+                    @ViewData["Response"]
+                </p>
+
+            }
+            <form asp-action="ExchangeRate" method="post">
+                <p>
+                    <label>Base Currency</label>
+                    <select asp-for="BaseCurrency" id="baseC">
+                        @foreach (var value in @ViewBag.Currencies)
+                        {
+                            <option value="@value">@value</option>
+                        }
+                    </select>
                 </p>
                 <p>
-                    <label>End Date</label>
-                    <input asp-for="EndDate" value="2020.07.01"/>
-                </p>*@
-            <p>
-                <label>Base Currency</label>
-                <select asp-for="BaseCurrency">
-                    @foreach (var value in @ViewBag.Currencies)
-                    {
-                        <option value="@value">@value</option>
-                    }
-                </select>
-            </p>
-            <p>
-                <label>End Currency</label>
-                <select asp-for="EndCurrency">
-                    @foreach (var value in @ViewBag.Currencies)
-                    {
-                        <option value="@value">@value</option>
-                    }
-                </select>
-            </p>
-            <input type="submit" value="send" />
-        </form>
+                    <label>End Currency</label>
+                    <select asp-for="EndCurrency" id="endC">
+                        @foreach (var value in @ViewBag.Currencies)
+                        {
+                            <option value="@value">@value</option>
+                        }
+                    </select>
+                </p>
+                @*<input type="submit" value="send" />*@
+                <button onclick="LoadData()"> GO JAVASCRIPT GO!</button>
+            </form>
+        </div>
+
+        @*convert money*@
+
+        <div class="text-center">
+            <form asp-action="ConvertMoney" method="post">
+                <p>
+                    <label>Convert</label>
+                    <input asp-for="Amount" placeholder="Amount" />
+                    <select asp-for="BaseCurrency">
+                        @foreach (var value in @ViewBag.Currencies)
+                        {
+                            <option value="@value">@value</option>
+                        }
+                    </select>
+                    <label>To</label>
+                    <select asp-for="EndCurrency">
+                        @foreach (var value in @ViewBag.Currencies)
+                        {
+                            <option value="@value">@value</option>
+                        }
+                    </select>
+                </p>
+                <input type="submit" value="Convert" />
+            </form>
+
+            @if (ViewData["ConvertResponse"] != null)
+            {
+                <h3>
+                    @ViewData["Amount"] @ViewData["BaseCurrency"] = @ViewData["ConvertResponse"] @ViewData["EndCurrency"]
+                </h3>
+            }
+        </div>
     </div>
-
-    @*convert money*@
-
-    <div class="text-center">
-        <form asp-action="ConvertMoney" method="post">
-            <p>
-                <label>Convert</label>
-                <input asp-for="Amount" placeholder="Amount" />
-                <select asp-for="BaseCurrency">
-                    @foreach (var value in @ViewBag.Currencies)
-                    {
-                        <option value="@value">@value</option>
-                    }
-                </select>
-                <label>To</label>
-                <select asp-for="EndCurrency">
-                    @foreach (var value in @ViewBag.Currencies)
-                    {
-                        <option value="@value">@value</option>
-                    }
-                </select>
-            </p>
-            <input type="submit" value="Convert" />
-        </form>
-
-        @if (ViewData["ConvertResponse"] != null)
-        {
-    <h3>
-        @ViewData["Amount"] @ViewData["BaseCurrency"] = @ViewData["ConvertResponse"] @ViewData["EndCurrency"]
-    </h3>
-        }
-    </div>
-</div>
 
 
 
