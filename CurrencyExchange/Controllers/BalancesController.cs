@@ -81,38 +81,39 @@ namespace CurrencyExchange.Controllers
             return View(balance);
         }
 
-        // GET: Balances/Delete/5
-        public async Task<IActionResult> Delete(int? id)
-        {
-            if (id == null)
-            {
-                return NotFound();
-            }
-
-            var balance = await _context.Balances
-                .FirstOrDefaultAsync(m => m.ID == id);
-            if (balance == null)
-            {
-                return NotFound();
-            }
-
-            return View(balance);
-        }
-
-        // POST: Balances/Delete/5
-        [HttpPost, ActionName("Delete")]
-        [ValidateAntiForgeryToken]
-        public async Task<IActionResult> DeleteConfirmed(int id)
-        {
-            var balance = await _context.Balances.FindAsync(id);
-            _context.Balances.Remove(balance);
-            await _context.SaveChangesAsync();
-            return RedirectToAction(nameof(Index));
-        }
-
         private bool BalanceExists(int id)
         {
             return _context.Balances.Any(e => e.ID == id);
         }
     }
 }
+
+        //// GET: Balances/Delete/5
+        //public async Task<IActionResult> Delete(int? id)
+        //{
+        //    if (id == null)
+        //    {
+        //        return NotFound();
+        //    }
+
+        //    var balance = await _context.Balances
+        //        .FirstOrDefaultAsync(m => m.ID == id);
+        //    if (balance == null)
+        //    {
+        //        return NotFound();
+        //    }
+
+        //    return View(balance);
+        //}
+
+        // POST: Balances/Delete/5
+        
+        //[HttpPost, ActionName("Delete")]
+        //[ValidateAntiForgeryToken]
+        //public async Task<IActionResult> DeleteConfirmed(int id)
+        //{
+        //    var balance = await _context.Balances.FindAsync(id);
+        //    _context.Balances.Remove(balance);
+        //    await _context.SaveChangesAsync();
+        //    return RedirectToAction(nameof(Index));
+        //}

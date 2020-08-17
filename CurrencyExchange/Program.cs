@@ -15,7 +15,8 @@ namespace CurrencyExchange
             MessageService.Initialize();
             NotificationService.Initialize(services);
             BalanceService.Initialize(services);
-
+            TransferService.Initialize(services);
+            //TransferService.SendMoney(7, 28, "USD", 100);
             host.Run();
         }
 
