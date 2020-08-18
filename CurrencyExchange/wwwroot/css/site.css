@@ -4,8 +4,8 @@ for details on configuring this project to bundle and minify static web assets. 
 
 
 nav {
-    position: fixed;
     z-index: 2;
+    text-align: left;
 }
 
 a.navbar-brand {

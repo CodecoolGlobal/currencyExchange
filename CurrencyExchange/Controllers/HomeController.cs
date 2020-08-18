@@ -11,9 +11,6 @@ using Newtonsoft.Json;
 using System.Text;
 using Microsoft.AspNetCore.Http;
 using CurrencyExchange.Services;
-using Microsoft.AspNetCore.Routing;
-using System.Text.Json;
-using System.Text.Json.Serialization;
 
 namespace CurrencyExchange.Controllers
 {
@@ -30,17 +27,6 @@ namespace CurrencyExchange.Controllers
 
         public async Task<IActionResult> IndexAsync()
         {
-            //if(TempData["ConvertResponse"] != null)
-            //{
-            //    ViewData["ConvertResponse"] = TempData["ConvertResponse"];
-            //    ViewData["Amount"] = TempData["Amount"];
-            //    ViewData["BaseCurrency"] = TempData["BaseCurrency"];
-            //    ViewData["EndCurrency"] = TempData["EndCurrency"];
-            //}
-            //if (TempData["Response"] != null)
-            //{
-            //    ViewData["Response"] = TempData["Response"];
-            //}
             ViewBag.Currencies = currencies;
             DateTime startDate = GetRandomDate();
             DateTime endDate = GetRandomDate();
@@ -104,30 +90,9 @@ namespace CurrencyExchange.Controllers
             return View();
         }
 
-        public IActionResult ExchangeRate()
-        {
-            ViewBag.Currencies = currencies;
-            return View();
-        }
-
-
-        public class Resp
-        {
-            public Resp(string name)
-            {
-                Name = name;
-            }
-            public string Name { get; set; }
-        }
-
-        public class DumConv
-        {
-            public string BaseCurrency { get; set; }
-            public string EndCurrency { get; set; }
-        }
 
         [HttpPost]
-        public JsonResult ExchangeRate([FromBody] DumConv conv)
+        public JsonResult ExchangeRate([FromBody] AjaxConversion conv)
         {
             Conversion conversion = new Conversion();
             conversion.BaseCurrency = conv.BaseCurrency;
@@ -138,21 +103,9 @@ namespace CurrencyExchange.Controllers
 
         }
 
-        public IActionResult ConvertMoney()
-        {
-            ViewBag.Currencies = currencies;
-            return View();
-        }
-
-        public class DumConv2
-        {
-            public string BaseCurrency { get; set; }
-            public string EndCurrency { get; set; }
-            public string Amount { get; set; }
-        }
 
         [HttpPost]
-        public JsonResult ConvertMoney([FromBody] DumConv2 conv)
+        public JsonResult ConvertMoney([FromBody] AjaxConversion conv)
         {
             Conversion conversion = new Conversion();
             conversion.BaseCurrency = conv.BaseCurrency;

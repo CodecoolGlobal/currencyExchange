@@ -28,6 +28,7 @@ namespace CurrencyExchange.Controllers
         //[Authorize]
         public async Task<IActionResult> Index()
         {
+            ViewBag.Currencies = currencies;
             if (HttpContext.Session.GetString("sessionUserRole") == null)
             {
                 return RedirectToAction("Index", "Home");
@@ -46,6 +47,7 @@ namespace CurrencyExchange.Controllers
         // GET: Users/Details/5
         public async Task<IActionResult> Details(int? id)
         {
+            ViewBag.Currencies = currencies;
             if (id == null)
             {
                 return NotFound();
@@ -71,6 +73,7 @@ namespace CurrencyExchange.Controllers
         // GET: Users/Login
         public IActionResult Login()
         {
+            ViewBag.Currencies = currencies;
             if (HttpContext.Session.GetString("sessionUser") != null)
             {
                 return RedirectToAction("Index", "Home");
@@ -119,6 +122,7 @@ namespace CurrencyExchange.Controllers
         // GET: Users/Create
         public IActionResult Register()
         {
+            ViewBag.Currencies = currencies;
             if (HttpContext.Session.GetString("sessionUser") != null)
             {
                 return RedirectToAction("Index", "Home");
@@ -159,6 +163,7 @@ namespace CurrencyExchange.Controllers
         // GET: Users/Edit/5
         public async Task<IActionResult> Edit(int? id)
         {
+            ViewBag.Currencies = currencies;
             if (id == null)
             {
                 return NotFound();
@@ -188,6 +193,7 @@ namespace CurrencyExchange.Controllers
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> Edit(int id, [Bind("ID,Email,Password,UserName")] User user)
         {
+            ViewBag.Currencies = currencies;
             if (id != user.ID)
             {
                 return NotFound();
