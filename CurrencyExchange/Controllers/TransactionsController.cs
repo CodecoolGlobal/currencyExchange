@@ -76,26 +76,13 @@ namespace CurrencyExchange.Controllers
                 User sender = _context.Users.Where(u => u.ID == userIdFromSession).First();
                 transaction.Sender = sender;
 
-                bool CurrencyOwned = _context.Balances
-                    .Include(b => b.User)
-                    .Where(b => b.User == transaction.Sender)
-                    .Where(b => b.Currency == transaction.Currency)
-                    .Any();
-
-                if (!CurrencyOwned)
+                if (!CurrencyOwned(transaction))
                 {
                     AlertNoCurrency(transaction.Currency);
                     return View();
                 }
 
-                bool EnoughMoney = _context.Balances
-                    .Include(b => b.User)
-                    .Where(b => b.User == transaction.Sender)
-                    .Where(b => b.Currency == transaction.Currency)
-                    .Where(b => b.Amount >= transaction.Amount)
-                    .Any();
-
-                if (!EnoughMoney)
+                if (!EnoughMoney(transaction))
                 {
                     AlertNotEnough(transaction.Currency);
                     return View();
@@ -108,7 +95,7 @@ namespace CurrencyExchange.Controllers
                 }
                 catch (InvalidOperationException e)
                 {
-                    Alert(e, RecipientEmail);
+                    AlertWrongEmail(e, RecipientEmail);
                     return View();
                 }
                 transaction.Date = DateTime.Now;
@@ -128,7 +115,7 @@ namespace CurrencyExchange.Controllers
             return _context.Transactions.Any(e => e.ID == id);
         }
 
-        private void Alert(Exception e, string address)
+        private void AlertWrongEmail(Exception e, string address)
         {
             ViewBag.Alert = $"Email address {address} is not registered in Currency Exchange!";
         }
@@ -145,6 +132,25 @@ namespace CurrencyExchange.Controllers
             ViewBag.Alert = $"You dont have enough {currency} on your balance!\n" +
                            $"Add more {currency} to complete the transaction!";
             ViewBag.Currencies = currencies;
+        }
+
+        private bool CurrencyOwned(Transaction transaction)
+        {
+            return _context.Balances
+                     .Include(b => b.User)
+                     .Where(b => b.User == transaction.Sender)
+                     .Where(b => b.Currency == transaction.Currency)
+                     .Any();
+        }
+
+        private bool EnoughMoney(Transaction transaction)
+        {
+            return _context.Balances
+                    .Include(b => b.User)
+                    .Where(b => b.User == transaction.Sender)
+                    .Where(b => b.Currency == transaction.Currency)
+                    .Where(b => b.Amount >= transaction.Amount)
+                    .Any();
         }
     }
 }
