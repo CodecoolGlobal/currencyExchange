@@ -37,11 +37,10 @@ namespace CurrencyExchange.Controllers
             //    ViewData["BaseCurrency"] = TempData["BaseCurrency"];
             //    ViewData["EndCurrency"] = TempData["EndCurrency"];
             //}
-            if (TempData["Response"] != null)
+            //if (TempData["Response"] != null)
             //{
             //    ViewData["Response"] = TempData["Response"];
             //}
-            TempData["Currencies"] = currencies;
             ViewBag.Currencies = currencies;
             DateTime startDate = GetRandomDate();
             DateTime endDate = GetRandomDate();
@@ -134,11 +133,7 @@ namespace CurrencyExchange.Controllers
             conversion.BaseCurrency = conv.BaseCurrency;
             conversion.EndCurrency = conv.EndCurrency;
             ViewBag.Currencies = currencies;
-            String response = CurrencyApiService.GetRate(conversion).ToString();
-            Resp resp = new Resp(response);
-            //string stringData = System.Text.Json.JsonSerializer.Serialize(resp);
-            TempData["Response"] = response;
-            string getThis = Json(new { Result = response, System.Web.Mvc.JsonRequestBehavior.AllowGet }).ToString();
+            string response = CurrencyApiService.GetRate(conversion).ToString();
             return Json(new { Result = response, System.Web.Mvc.JsonRequestBehavior.AllowGet });
 
         }
@@ -149,15 +144,24 @@ namespace CurrencyExchange.Controllers
             return View();
         }
 
-        [HttpPost]
-        public IActionResult ConvertMoney(Conversion conversion)
+        public class DumConv2
         {
+            public string BaseCurrency { get; set; }
+            public string EndCurrency { get; set; }
+            public string Amount { get; set; }
+        }
+
+        [HttpPost]
+        public JsonResult ConvertMoney([FromBody] DumConv2 conv)
+        {
+            Conversion conversion = new Conversion();
+            conversion.BaseCurrency = conv.BaseCurrency;
+            conversion.EndCurrency = conv.EndCurrency;
+            conversion.Amount = Convert.ToDecimal(conv.Amount);
             ViewBag.Currencies = currencies;
-            TempData["ConvertResponse"] = (CurrencyApiService.GetRate(conversion) * conversion.Amount).ToString();
-            TempData["Amount"] = conversion.Amount.ToString();
-            TempData["BaseCurrency"] = conversion.BaseCurrency.ToString();
-            TempData["EndCurrency"] = conversion.EndCurrency.ToString();
-            return RedirectToAction("Index", "Home");
+            string response = (CurrencyApiService.GetRate(conversion) * conversion.Amount).ToString();
+
+            return Json(new { Result = response, System.Web.Mvc.JsonRequestBehavior.AllowGet });
         }
 
         [ResponseCache(Duration = 0, Location = ResponseCacheLocation.None, NoStore = true)]

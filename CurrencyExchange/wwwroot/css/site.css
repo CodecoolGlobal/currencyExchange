@@ -10,13 +10,16 @@ nav {
 
 a.navbar-brand {
   white-space: normal;
-  text-align: center;
+  text-align: left;
   word-break: break-all;
 }
 
+.navbar-nav flex-grow-1{
+    text-align: right;
+}
 /* Provide sufficient contrast against white background */
 a {
-  color: #0366d6;
+    color: #0366d6;
 }
 
 .btn-primary {
@@ -98,7 +101,7 @@ canvas{
     z-index: 1; /* Stay on top */
     top: 0; /* Stay at the top */
     left: 0;
-    background-color: gainsboro; /* Black*/
+    background-color: white; /* Black*/
     overflow-x: hidden; /* Disable horizontal scroll */
     padding-top: 60px; /* Place content 60px from the top */
     transition: 0.5s; /* 0.5 second transition effect to slide in the sidenav */
@@ -118,3 +121,22 @@ canvas{
 .sidenav a:hover {
     color: #f1f1f1;
 }
+
+#card{
+    border-radius: 5px;
+    background-color: rgb(240,240,240);
+    margin: 10px;
+    padding: 5px;
+}
+
+h5{
+    text-align: left;
+    margin-left: 15px;
+    padding:10px;
+    margin-bottom:0;
+}
+p {
+    padding: 8px;
+    margin:0;
+}
+

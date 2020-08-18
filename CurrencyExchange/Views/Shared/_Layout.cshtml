@@ -14,9 +14,6 @@
 
 </head>
 <body>
-    @{
-        ViewBag.currencies = TempData["Currencies"];
-    }
     <header>
         <nav class="navbar navbar-expand-sm navbar-toggleable-sm navbar-light bg-white border-bottom box-shadow mb-3">
             <div class="container">
@@ -77,10 +74,8 @@
     <div id="mySidenav" class="sidenav">
 
         @*exchangerate*@
-        <label>Exchange rate</label>
         <div class="text-center">
 
-            <h3 id="ConvertResolution"></h3>
 
             @if (ViewData["Response"] != null)
             {
@@ -89,11 +84,12 @@
                 </p>
 
             }
-            <div>
+            <div id="card">
+                <h4>Exchange rate</h4>
                 <p>
                     <label>Base Currency</label>
                     <select id="baseC">
-                        @foreach (var value in ViewBag.currencies)
+                        @foreach (var value in ViewBag.Currencies)
                         {
                             <option value="@value">@value</option>
                         }
@@ -102,14 +98,14 @@
                 <p>
                     <label>End Currency</label>
                     <select id="endC">
-                        @foreach (var value in ViewBag.currencies)
+                        @foreach (var value in ViewBag.Currencies)
                         {
                             <option value="@value">@value</option>
                         }
                     </select>
                 </p>
-                @*<input type="submit" value="send" />*@
-                <button id="exchangeButton" onclick="loadData()"> GO JAVASCRIPT GO!</button>
+                <input type="button" id="exchangeButton" onclick="getExchangeRate()" value=" GO JAVASCRIPT GO!" />
+                <h5 id="exchange-box">Value:</h5>
             </div>
         </div>
 
@@ -118,64 +114,64 @@
         @*jqueryyyyyyy*@
 
         <script type="text/javascript">
+            function getExchangeRate() {
 
-            function loadData() {
+            //alert("");
+            var conv = new Object();
+            conv.BaseCurrency = $("#baseC").val();
+            conv.EndCurrency = $("#endC").val();
 
-                //alert("");
-                var conv = new Object();
-                conv.BaseCurrency = $('#baseC').val();
-                conv.EndCurrency = $('#endC').val();
+            if (conv != null) {
+                $.ajax({
+                    type: "POST",
+                    url: '@Url.Action("ExchangeRate")',
+                    data: JSON.stringify(conv),
+                    contentType: "application/json; charset=utf-8",
+                    dataType: "json",
+                    success: function (response) {
+                        if (response != null) {
+                            console.log(response.result);
+                            $('#exchange-box').text("Value: " + response.result);
 
-                $("#ConvertResolution tr").remove();
-                if (conv != null) {
-                    $.ajax({
-                        type: "POST",
-                        url: '@Url.Action("ExchangeRate")',
-                        data: JSON.stringify(conv),
-                        contentType: "application/json; charset=utf-8",
-                        dataType: "json",
-                        success: function (response) {
-                            if (response != null) {
-                                console.log(response.result);
-                                var row = "<tr>"
-                                        + "<td class='prtoducttd'>" + response.result + "</td>"
-                                        + "</tr>";
-                                $('#ConvertResolution').append(row);
-
-
-                            }
-                        },
-                        error: function () {
-                            alert("Error while inserting data");
                         }
-                    })
-                }
-            };
+                    },
+                    error: function () {
+                        alert("Error while inserting data");
+                    }
+                })
+            }
+        }
         </script>
 
         @*convert money*@
 
         <div class="text-center">
-            <form asp-action="ConvertMoney" method="post">
+            <div id="card">
+                <h4>Convert Money</h4>
                 <p>
-                    <label>Convert</label>
-                    <input asp-for="Amount" placeholder="Amount" />
-                    <select asp-for="BaseCurrency">
-                        @foreach (var value in @ViewBag.Currencies)
-                        {
-                            <option value="@value">@value</option>
-                        }
-                    </select>
-                    <label>To</label>
-                    <select asp-for="EndCurrency">
-                        @foreach (var value in @ViewBag.Currencies)
+                    <input id="Amount" type="number" placeholder="Amount" required />
+                </p>
+                <p>
+                    <label>Base Currency</label>
+                    <select id="CbaseC">
+                        @foreach (var value in ViewBag.Currencies)
                         {
                             <option value="@value">@value</option>
                         }
                     </select>
                 </p>
-                <input type="submit" value="Convert" />
-            </form>
+                <p>
+                    <label>End Currency</label>
+                    <select id="CendC">
+                        @foreach (var value in ViewBag.Currencies)
+                        {
+                            <option value="@value">@value</option>
+                        }
+                    </select>
+                </p>
+                <input type="button" id="convertButton" onclick="convertMoney()" value=" GO JAVASCRIPT GO!" />
+                <h5 id="convert-box">Value:</h5>
+            </div>
 
             @if (ViewData["ConvertResponse"] != null)
             {
@@ -186,7 +182,40 @@
         </div>
     </div>
 
+    @*jqueryyyyyyy*@
 
+    <script type="text/javascript">
+        function convertMoney() {
+
+        //alert("");
+        var conv = new Object();
+        conv.BaseCurrency = $('#CbaseC').val();
+        conv.EndCurrency = $('#CendC').val();
+        conv.Amount = $('#Amount').val();
+
+        if (conv != null) {
+            $.ajax({
+                type: "POST",
+                url: '@Url.Action("ConvertMoney")',
+                data: JSON.stringify(conv),
+                contentType: "application/json; charset=utf-8",
+                dataType: "json",
+                success: function (response) {
+                    if (response != null) {
+                        //console.log(response.result);
+                        //var row =  "<h3 class='prtoducttd'>" + response.result + "</h3>";
+                        $('#convert-box').text("Value: " + response.result);
+
+
+                    }
+                },
+                error: function () {
+                    alert("input your Ammount");
+                }
+            })
+        }
+    };
+    </script>
 
 
     <footer class="border-top footer text-muted">
@@ -196,7 +225,8 @@
     </footer>
     <script src="~/lib/jquery/dist/jquery.min.js"></script>
     <script src="~/lib/bootstrap/dist/js/bootstrap.bundle.min.js"></script>
-    <script src="~/js/site.js" asp-append-version="true"></script>
+    <script type="text/javascript" src="~/js/site.js" asp-append-version="true"></script>
+
     @RenderSection("Scripts", required: false)
 </body>
 </html>
