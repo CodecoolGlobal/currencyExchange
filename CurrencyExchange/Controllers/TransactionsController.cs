@@ -72,6 +72,35 @@ namespace CurrencyExchange.Controllers
             if (ModelState["Currency"].ValidationState.Equals(ModelValidationState.Valid) &&
                 ModelState["Amount"].ValidationState.Equals(ModelValidationState.Valid))
             {
+                int userIdFromSession = Convert.ToInt32(HttpContext.Session.GetString("sessionUser"));
+                User sender = _context.Users.Where(u => u.ID == userIdFromSession).First();
+                transaction.Sender = sender;
+
+                bool CurrencyOwned = _context.Balances
+                    .Include(b => b.User)
+                    .Where(b => b.User == transaction.Sender)
+                    .Where(b => b.Currency == transaction.Currency)
+                    .Any();
+
+                if (!CurrencyOwned)
+                {
+                    AlertNoCurrency(transaction.Currency);
+                    return View();
+                }
+
+                bool EnoughMoney = _context.Balances
+                    .Include(b => b.User)
+                    .Where(b => b.User == transaction.Sender)
+                    .Where(b => b.Currency == transaction.Currency)
+                    .Where(b => b.Amount >= transaction.Amount)
+                    .Any();
+
+                if (!EnoughMoney)
+                {
+                    AlertNotEnough(transaction.Currency);
+                    return View();
+                }
+
                 try
                 {
                     User recipient = _context.Users.Where(u => u.Email == RecipientEmail).First();
@@ -82,9 +111,6 @@ namespace CurrencyExchange.Controllers
                     Alert(e, RecipientEmail);
                     return View();
                 }
-                int userIdFromSession = Convert.ToInt32(HttpContext.Session.GetString("sessionUser"));
-                User sender = _context.Users.Where(u => u.ID == userIdFromSession).First();
-                transaction.Sender = sender;
                 transaction.Date = DateTime.Now;
                 _context.Add(transaction);
                 await _context.SaveChangesAsync();
@@ -96,6 +122,7 @@ namespace CurrencyExchange.Controllers
             return View(transaction);
         }
 
+
         private bool TransactionExists(int id)
         {
             return _context.Transactions.Any(e => e.ID == id);
@@ -104,6 +131,20 @@ namespace CurrencyExchange.Controllers
         private void Alert(Exception e, string address)
         {
             ViewBag.Alert = $"Email address {address} is not registered in Currency Exchange!";
+        }
+
+        private void AlertNoCurrency(string currency)
+        {
+            ViewBag.Alert = $"You dont have a {currency} balance!\n" +
+                            $"Add {currency} first!";
+            ViewBag.Currencies = currencies;
+        }
+
+        private void AlertNotEnough(string currency)
+        {
+            ViewBag.Alert = $"You dont have enough {currency} on your balance!\n" +
+                           $"Add more {currency} to complete the transaction!";
+            ViewBag.Currencies = currencies;
         }
     }
 }

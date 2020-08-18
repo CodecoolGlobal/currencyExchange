@@ -23,17 +23,10 @@ namespace CurrencyExchange.Services
                     _serviceProvider.GetRequiredService<
                         DbContextOptions<CurrencyExchangeContext>>()))
             {
-                try
-                {
                     Balance senderBalance = context.Balances.Include(b => b.User)
                         .Where(b => b.User.ID == transaction.Sender.ID)
                         .Where(b => b.Currency == transaction.Currency).First();
                     BalanceService.EditBalance(senderBalance, transaction.Amount * -1);
-                }
-                catch (InvalidOperationException e)
-                {
-                    throw new InvalidOperationException();
-                }
 
                 try
                 {
