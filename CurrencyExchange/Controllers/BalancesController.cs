@@ -82,6 +82,28 @@ namespace CurrencyExchange.Controllers
             return View(balance);
         }
 
+        // GET: Balances/Add
+        public async Task<IActionResult> AddAsync(int? id)
+        {
+            Balance balance =  await _context.Balances
+                .Include(b => b.User)
+                .FirstOrDefaultAsync(b => b.ID == id);
+            int userIdFromSession = Convert.ToInt32(HttpContext.Session.GetString("sessionUser"));
+            if (userIdFromSession == balance.User.ID)
+            {
+                return View(balance);
+            }
+            return RedirectToAction("Index", "Home");
+        }
+
+        // POST: Balances/Add
+        // To protect from overposting attacks, please enable the specific properties you want to bind to, for 
+        // more details see http://go.microsoft.com/fwlink/?LinkId=317598.
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public async Task<IActionResult> Add()
+        { return null; }
+
         private bool BalanceExists(int id)
         {
             return _context.Balances.Any(e => e.ID == id);
@@ -89,32 +111,32 @@ namespace CurrencyExchange.Controllers
     }
 }
 
-        //// GET: Balances/Delete/5
-        //public async Task<IActionResult> Delete(int? id)
-        //{
-        //    if (id == null)
-        //    {
-        //        return NotFound();
-        //    }
+//// GET: Balances/Delete/5
+//public async Task<IActionResult> Delete(int? id)
+//{
+//    if (id == null)
+//    {
+//        return NotFound();
+//    }
 
-        //    var balance = await _context.Balances
-        //        .FirstOrDefaultAsync(m => m.ID == id);
-        //    if (balance == null)
-        //    {
-        //        return NotFound();
-        //    }
+//    var balance = await _context.Balances
+//        .FirstOrDefaultAsync(m => m.ID == id);
+//    if (balance == null)
+//    {
+//        return NotFound();
+//    }
 
-        //    return View(balance);
-        //}
+//    return View(balance);
+//}
 
-        // POST: Balances/Delete/5
-        
-        //[HttpPost, ActionName("Delete")]
-        //[ValidateAntiForgeryToken]
-        //public async Task<IActionResult> DeleteConfirmed(int id)
-        //{
-        //    var balance = await _context.Balances.FindAsync(id);
-        //    _context.Balances.Remove(balance);
-        //    await _context.SaveChangesAsync();
-        //    return RedirectToAction(nameof(Index));
-        //}
+// POST: Balances/Delete/5
+
+//[HttpPost, ActionName("Delete")]
+//[ValidateAntiForgeryToken]
+//public async Task<IActionResult> DeleteConfirmed(int id)
+//{
+//    var balance = await _context.Balances.FindAsync(id);
+//    _context.Balances.Remove(balance);
+//    await _context.SaveChangesAsync();
+//    return RedirectToAction(nameof(Index));
+//}
