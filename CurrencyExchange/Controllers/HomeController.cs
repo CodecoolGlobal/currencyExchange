@@ -30,17 +30,17 @@ namespace CurrencyExchange.Controllers
 
         public async Task<IActionResult> IndexAsync()
         {
-            if(TempData["ConvertResponse"] != null)
-            {
-                ViewData["ConvertResponse"] = TempData["ConvertResponse"];
-                ViewData["Amount"] = TempData["Amount"];
-                ViewData["BaseCurrency"] = TempData["BaseCurrency"];
-                ViewData["EndCurrency"] = TempData["EndCurrency"];
-            }
+            //if(TempData["ConvertResponse"] != null)
+            //{
+            //    ViewData["ConvertResponse"] = TempData["ConvertResponse"];
+            //    ViewData["Amount"] = TempData["Amount"];
+            //    ViewData["BaseCurrency"] = TempData["BaseCurrency"];
+            //    ViewData["EndCurrency"] = TempData["EndCurrency"];
+            //}
             if (TempData["Response"] != null)
-            {
-                ViewData["Response"] = TempData["Response"];
-            }
+            //{
+            //    ViewData["Response"] = TempData["Response"];
+            //}
             TempData["Currencies"] = currencies;
             ViewBag.Currencies = currencies;
             DateTime startDate = GetRandomDate();
