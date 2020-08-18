@@ -22,7 +22,14 @@
                 <select asp-for="Currency">
                     @foreach (var value in @ViewBag.Currencies)
                     {
-                        <option value="@value">@value</option>
+                        @if (ViewBag.PreSelect == value)
+                        {
+                            <option selected="selected" value="@value">@value</option>
+                        }
+                        else
+                        {
+                            <option value="@value">@value</option>
+                        }
                     }
                 </select>
                 <span asp-validation-for="Currency" class="text-danger"></span>

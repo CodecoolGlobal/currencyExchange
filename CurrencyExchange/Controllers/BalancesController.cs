@@ -115,6 +115,59 @@ namespace CurrencyExchange.Controllers
             return RedirectToAction("Index", "Home");
         }
 
+        public async Task<IActionResult> ConvertMoneyAsync(int id)
+        {
+            Balance balance = await _context.Balances
+               .Include(b => b.User)
+               .FirstOrDefaultAsync(b => b.ID == id);
+            ViewBag.Currencies = currencies;
+            ViewBag.BaseCurrency = balance.Currency;
+            return View();
+        }
+
+        [HttpPost]
+        public async Task<IActionResult> ConvertMoneyAsync(Conversion conversion)
+        {
+            int userIdFromSession = Convert.ToInt32(HttpContext.Session.GetString("sessionUser"));
+            int amount = (int)((int)CurrencyApiService.GetRate(conversion) * conversion.Amount);
+
+            bool AlreadyExists = _context.Balances
+                .Include(b => b.User)
+                .Where(b => b.User.ID == userIdFromSession)
+                .Where(b => b.Currency == conversion.EndCurrency)
+                .Any();
+            if (AlreadyExists)
+            {
+                Balance balance = await _context.Balances
+                    .Include(b => b.User)
+                    .Where(b => b.User.ID == userIdFromSession)
+                    .Where(b => b.Currency == conversion.EndCurrency)
+                    .FirstOrDefaultAsync();
+                BalanceService.EditBalance(balance, amount);
+            }
+            else
+            {
+                User user = _context.Users.Find(userIdFromSession);
+                Balance balance = new Balance() { Amount = amount, Currency = conversion.EndCurrency };
+                balance.User = user;
+                _context.Balances.Add(balance);
+                await _context.SaveChangesAsync();
+            }
+            Balance original = await _context.Balances
+                    .Include(b => b.User)
+                    .Where(b => b.User.ID == userIdFromSession)
+                    .Where(b => b.Currency == conversion.BaseCurrency)
+                    .FirstOrDefaultAsync();
+            BalanceService.EditBalance(original, (int)conversion.Amount * -1);
+            return RedirectToAction("Index", new RouteValueDictionary(
+                       new
+                       {
+                           controller = "Balances",
+                           action = "Index",
+                           id = userIdFromSession
+                       }));
+        }
+
         private bool BalanceExists(int id)
         {
             return _context.Balances.Any(e => e.ID == id);

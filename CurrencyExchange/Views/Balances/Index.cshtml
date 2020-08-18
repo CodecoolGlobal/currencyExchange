@@ -33,8 +33,8 @@
                 </td>
                 <td>
                     <a asp-action="Add" asp-route-id="@item.ID">Add</a> |
-                    <a asp-action="Details" asp-route-id="@item.ID">Send</a> |
-                    <a asp-action="Delete" asp-route-id="@item.ID">Convert</a>
+                    <a asp-controller="Transactions" asp-action="Create" asp-route-currency="@item.Currency">Send</a> |
+                    <a asp-action="ConvertMoney" asp-route-id="@item.ID">Convert</a>
                 </td>
             </tr>
         }

@@ -56,9 +56,10 @@ namespace CurrencyExchange.Controllers
         }
 
         // GET: Transactions/Create
-        public IActionResult Create()
+        public IActionResult Create(string? currency)
         {
             ViewBag.Currencies = currencies;
+            ViewBag.PreSelect = currency;
             return View();
         }
 
@@ -99,6 +100,7 @@ namespace CurrencyExchange.Controllers
                     return View();
                 }
                 transaction.Date = DateTime.Now;
+                transaction.Status = "Completed";
                 _context.Add(transaction);
                 await _context.SaveChangesAsync();
                 TransferService.SendMoney(transaction);
