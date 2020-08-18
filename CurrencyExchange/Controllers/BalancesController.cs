@@ -76,8 +76,7 @@ namespace CurrencyExchange.Controllers
                     //BalanceService.AddNewBalance(balance);
                 }
                 return RedirectToAction("Index", new RouteValueDictionary(
-                       new { controller = "Balances", action = "Index", id = userIdFromSession })
-                   );
+                       new { controller = "Balances", action = "Index", id = userIdFromSession }));
             }
             return View(balance);
         }
@@ -85,7 +84,7 @@ namespace CurrencyExchange.Controllers
         // GET: Balances/Add
         public async Task<IActionResult> AddAsync(int? id)
         {
-            Balance balance =  await _context.Balances
+            Balance balance = await _context.Balances
                 .Include(b => b.User)
                 .FirstOrDefaultAsync(b => b.ID == id);
             int userIdFromSession = Convert.ToInt32(HttpContext.Session.GetString("sessionUser"));
@@ -101,8 +100,20 @@ namespace CurrencyExchange.Controllers
         // more details see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Add()
-        { return null; }
+        public async Task<IActionResult> Add(int id, int amount)
+        {
+            Balance balance = await _context.Balances
+                .Include(b => b.User)
+                .FirstOrDefaultAsync(b => b.ID == id);
+            int userIdFromSession = Convert.ToInt32(HttpContext.Session.GetString("sessionUser"));
+            if (userIdFromSession == balance.User.ID)
+            {
+                BalanceService.EditBalance(balance, amount);
+                return RedirectToAction("Index", new RouteValueDictionary(
+                       new { controller = "Balances", action = "Index", id = userIdFromSession }));
+            }
+            return RedirectToAction("Index", "Home");
+        }
 
         private bool BalanceExists(int id)
         {
