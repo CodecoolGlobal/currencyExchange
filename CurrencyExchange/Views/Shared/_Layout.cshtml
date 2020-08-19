@@ -38,6 +38,12 @@
                         else
                         {
                             <li class="nav-item">
+                                <a class="nav-link text-dark" asp-area="" asp-controller="Transactions" asp-action="Index" asp-route-id="@Context.Session.GetString("sessionUser")">Transactions</a>
+                            </li>
+                            <li class="nav-item">
+                                <a class="nav-link text-dark" asp-area="" asp-controller="Balances" asp-action="Index" asp-route-id="@Context.Session.GetString("sessionUser")">My Balances</a>
+                            </li>
+                            <li class="nav-item">
                                 <a class="nav-link text-dark" asp-area="" asp-controller="Notifications" asp-action="Index" asp-route-id="@Context.Session.GetString("sessionUser")">My Notifications</a>
                             </li>
                             <li class="nav-item">

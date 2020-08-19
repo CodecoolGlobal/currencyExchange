@@ -2,6 +2,7 @@
 using MailKit.Net.Imap;
 using MailKit.Net.Smtp;
 using MimeKit;
+using System.Transactions;
 
 namespace CurrencyExchange.Services
 {
@@ -20,7 +21,7 @@ namespace CurrencyExchange.Services
             client = new ImapClient();
         }
 
-        public static void SendMail(Email email)
+        private static void SendMail(Email email)
         {
             MimeMessage message = new MimeMessage();
             BodyBuilder bodyBuilder = new BodyBuilder();
@@ -47,13 +48,41 @@ namespace CurrencyExchange.Services
             string UserName = notification.User.UserName;
             string EmailAddress = notification.User.Email;
 
-            string emailBody = $"Dear {UserName}, \n" +
+            string EmailBody = $"Dear {UserName}, \n" +
                 $"\n" +
                 $"The value of 1 {BaseCurrency} ha reached your target of {Value} {Endcurrency} as it is currently at {ActualValue} {Endcurrency}.\n" +
                 $"\n" +
                 $"Message automatically sent by CurrencyExchange (Made by Tamás Kruppa and Dávid Kalló)";
-            Email email = new Email(EmailAddress, UserName, "Currency Notification", emailBody);
+            Email email = new Email(EmailAddress, UserName, "Currency Notification", EmailBody);
             SendMail(email);
+        }
+
+        public static void ComposeTransactionEmail(Models.Transaction transaction)
+        {
+            string Currency = transaction.Currency;
+            string Amount = transaction.Amount.ToString();
+            string SenderUserName = transaction.Sender.UserName;
+            string SenderEmailAddress = transaction.Sender.Email;
+            string RecipientUserName = transaction.Recipient.UserName;
+            string RecipientEmailAddress = transaction.Recipient.Email;
+
+            string SenderEmailBody = $"Dear {SenderUserName}, \n" +
+                $"\n" +
+                $"You have succesfully sent {Amount} {Currency} to {RecipientUserName}! \n" +
+                $"\n" +
+                $"Message automatically sent by CurrencyExchange (Made by Tamás Kruppa and Dávid Kalló)";
+
+            Email senderEmail = new Email(SenderEmailAddress, SenderUserName, "Money Transfer", SenderEmailBody);
+            SendMail(senderEmail);
+
+            string RecipientEmailBody = $"Dear {RecipientUserName}, \n" +
+               $"\n" +
+               $"{SenderUserName} has sent you {Amount} {Currency}! \n" +
+               $"\n" +
+               $"Message automatically sent by CurrencyExchange (Made by Tamás Kruppa and Dávid Kalló)";
+
+            Email recipientEmail = new Email(RecipientEmailAddress, RecipientUserName, "Money Transfer", RecipientEmailBody);
+            SendMail(recipientEmail);
         }
     }
 }

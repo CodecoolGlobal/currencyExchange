@@ -4,14 +4,16 @@ using CurrencyExchange.Data;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 namespace CurrencyExchange.Migrations
 {
     [DbContext(typeof(CurrencyExchangeContext))]
-    partial class CurrencyExchangeContextModelSnapshot : ModelSnapshot
+    [Migration("20200816214551_Balances")]
+    partial class Balances
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -78,41 +80,6 @@ namespace CurrencyExchange.Migrations
                     b.ToTable("Notifications");
                 });
 
-            modelBuilder.Entity("CurrencyExchange.Models.Transaction", b =>
-                {
-                    b.Property<int>("ID")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("int")
-                        .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
-
-                    b.Property<int>("Amount")
-                        .HasColumnType("int");
-
-                    b.Property<string>("Currency")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<DateTime>("Date")
-                        .HasColumnType("datetime2");
-
-                    b.Property<int>("RecipientID")
-                        .HasColumnType("int");
-
-                    b.Property<int?>("SenderID")
-                        .HasColumnType("int");
-
-                    b.Property<string>("Status")
-                        .HasColumnType("nvarchar(max)");
-
-                    b.HasKey("ID");
-
-                    b.HasIndex("RecipientID");
-
-                    b.HasIndex("SenderID");
-
-                    b.ToTable("Transactions");
-                });
-
             modelBuilder.Entity("CurrencyExchange.Models.User", b =>
                 {
                     b.Property<int>("ID")
@@ -160,19 +127,6 @@ namespace CurrencyExchange.Migrations
                     b.HasOne("CurrencyExchange.Models.User", "User")
                         .WithMany()
                         .HasForeignKey("UserID");
-                });
-
-            modelBuilder.Entity("CurrencyExchange.Models.Transaction", b =>
-                {
-                    b.HasOne("CurrencyExchange.Models.User", "Recipient")
-                        .WithMany()
-                        .HasForeignKey("RecipientID")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.HasOne("CurrencyExchange.Models.User", "Sender")
-                        .WithMany()
-                        .HasForeignKey("SenderID");
                 });
 #pragma warning restore 612, 618
         }

@@ -1,0 +1,42 @@
+﻿@model IEnumerable<CurrencyExchange.Models.Balance>
+
+@{
+    ViewData["Title"] = "Index";
+}
+
+<h1>Index</h1>
+
+<p>
+    <a asp-action="Create">Add Balances</a>
+</p>
+<table class="table">
+    <thead>
+        <tr>
+            <th>
+                @Html.DisplayNameFor(model => model.Currency)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.Amount)
+            </th>
+            <th></th>
+        </tr>
+    </thead>
+    <tbody>
+        @foreach (var item in Model)
+        {
+            <tr>
+                <td>
+                    @Html.DisplayFor(modelItem => item.Currency)
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => item.Amount)
+                </td>
+                <td>
+                    <a asp-action="Add" asp-route-id="@item.ID">Add</a> |
+                    <a asp-controller="Transactions" asp-action="Create" asp-route-currency="@item.Currency">Send</a> |
+                    <a asp-action="ConvertMoney" asp-route-id="@item.ID">Convert</a>
+                </td>
+            </tr>
+        }
+    </tbody>
+</table>
