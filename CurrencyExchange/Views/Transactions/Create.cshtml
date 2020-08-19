@@ -40,6 +40,10 @@
                 <label asp-for="Amount" class="control-label"></label>
                 <input asp-for="Amount" class="form-control" />
                 <span asp-validation-for="Amount" class="text-danger"></span>
+                <input type="radio" id="now" name="NowOrLater" value="now" checked/>
+                <label for="now">Now</label><br>
+                <input type="radio" id="later" name="NowOrLater" value="later"/>
+                <label for="later">Later</label>
             </div>
             <div class="form-group">
                 <input type="submit" value="Create" class="btn btn-primary" />

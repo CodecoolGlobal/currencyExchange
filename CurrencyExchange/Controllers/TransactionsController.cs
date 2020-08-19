@@ -68,7 +68,7 @@ namespace CurrencyExchange.Controllers
         // more details see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Create([Bind("ID,Currency,Amount")] Transaction transaction, string RecipientEmail)
+        public async Task<IActionResult> Create([Bind("ID,Currency,Amount")] Transaction transaction, string RecipientEmail, string NowOrLater)
         {
             if (ModelState["Currency"].ValidationState.Equals(ModelValidationState.Valid) &&
                 ModelState["Amount"].ValidationState.Equals(ModelValidationState.Valid))
