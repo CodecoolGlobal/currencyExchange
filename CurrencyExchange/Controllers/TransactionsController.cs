@@ -99,8 +99,17 @@ namespace CurrencyExchange.Controllers
                     AlertWrongEmail(e, RecipientEmail);
                     return View();
                 }
-                transaction.Date = DateTime.Now;
-                transaction.Status = "Completed";
+                if (NowOrLater.Equals("now"))
+                {
+                    transaction.Date = DateTime.Now;
+                    transaction.Status = "Completed";
+                }
+                else
+                {
+                    transaction.Date = DateTime.Now;
+                    transaction.Status = "Pending";
+                }
+
                 _context.Add(transaction);
                 await _context.SaveChangesAsync();
                 TransferService.SendMoney(transaction);
