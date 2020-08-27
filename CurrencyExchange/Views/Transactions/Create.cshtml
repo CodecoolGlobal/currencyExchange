@@ -33,23 +33,35 @@
                     }
                 </select>
                 <span asp-validation-for="Currency" class="text-danger"></span>
-
-
             </div>
+
             <div class="form-group">
                 <label asp-for="Amount" class="control-label"></label>
                 <input asp-for="Amount" class="form-control" />
                 <span asp-validation-for="Amount" class="text-danger"></span>
-                <input type="radio" id="now" name="NowOrLater" value="now" checked/>
+                <input type="radio" id="nowCheck" name="NowOrLater" value="now" onclick="javascript:yesnoCheck();" />
                 <label for="now">Now</label><br>
-                <input type="radio" id="later" name="NowOrLater" value="later"/>
+                <input type="radio" id="laterCheck" name="NowOrLater" value="later" onclick="javascript:yesnoCheck();" />
                 <label for="later">Later</label>
-
+                <div id="ifLater" style="display:none">
+                    <input type="datetime-local" name="date" />
+                </div>
             </div>
             <div class="form-group">
                 <input type="submit" value="Create" class="btn btn-primary" />
             </div>
         </form>
+
+        <script type="text/javascript">
+            function yesnoCheck() {
+                if (document.getElementById("laterCheck").checked) {
+                    document.getElementById("ifLater").style.display = "block";
+                }
+                else document.getElementById("ifLater").style.display = "none";
+
+            }
+        </script>
+
         @if (ViewBag.Alert != null)
         {
             <script>alert("@ViewBag.Alert");</script>
