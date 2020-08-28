@@ -10,7 +10,7 @@ using RestSharp;
 using Newtonsoft.Json;
 using System.Text;
 using Microsoft.AspNetCore.Http;
-using CurrencyExchange.Services;
+using CurrencyExchange.Tools;
 
 namespace CurrencyExchange.Controllers
 {
@@ -22,7 +22,7 @@ namespace CurrencyExchange.Controllers
         public HomeController(ILogger<HomeController> logger)
         {
             _logger = logger;
-            currencies = CurrencyApiService.GetCurrencies();
+            currencies = CurrencyApiTools.GetCurrencies();
         }
 
         public async Task<IActionResult> IndexAsync()
@@ -99,7 +99,7 @@ namespace CurrencyExchange.Controllers
         public IActionResult ExchangeRate(Conversion conversion)
         {
             ViewBag.Currencies = currencies;
-            ViewBag.Response = CurrencyApiService.GetRate(conversion);
+            ViewBag.Response = CurrencyApiTools.GetRate(conversion);
             return View();
         }
 
@@ -113,7 +113,7 @@ namespace CurrencyExchange.Controllers
         public IActionResult ConvertMoney(Conversion conversion)
         {
             ViewBag.Currencies = currencies;
-            ViewBag.Response = CurrencyApiService.GetRate(conversion) * conversion.Amount;
+            ViewBag.Response = CurrencyApiTools.GetRate(conversion) * conversion.Amount;
             return View(conversion);
         }
 

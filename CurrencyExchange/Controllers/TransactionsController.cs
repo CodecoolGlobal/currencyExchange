@@ -3,7 +3,6 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
 using CurrencyExchange.Data;
 using CurrencyExchange.Models;
@@ -11,6 +10,7 @@ using Microsoft.AspNetCore.Http;
 using CurrencyExchange.Services;
 using Microsoft.AspNetCore.Mvc.ModelBinding;
 using Microsoft.AspNetCore.Routing;
+using CurrencyExchange.Tools;
 
 namespace CurrencyExchange.Controllers
 {
@@ -21,7 +21,7 @@ namespace CurrencyExchange.Controllers
 
         public TransactionsController(CurrencyExchangeContext context)
         {
-            currencies = CurrencyApiService.GetCurrencies();
+            currencies = CurrencyApiTools.GetCurrencies();
             _context = context;
         }
 
@@ -31,7 +31,7 @@ namespace CurrencyExchange.Controllers
             int userIdFromSession = Convert.ToInt32(HttpContext.Session.GetString("sessionUser"));
             if (userIdFromSession == id)
             {
-                List<Transaction> transactions = await TransferService.GetTransactionsAsync(id, false);
+                List<Transaction> transactions = await TransactionTools.GetTransactionsAsync(id, false);
                 return View(transactions);
             }
             return RedirectToAction("Index", "Home");

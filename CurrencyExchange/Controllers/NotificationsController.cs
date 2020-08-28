@@ -8,8 +8,7 @@ using CurrencyExchange.Data;
 using CurrencyExchange.Models;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Routing;
-using CurrencyExchange.Services;
-
+using CurrencyExchange.Tools;
 
 namespace CurrencyExchange.Controllers
 {
@@ -20,7 +19,7 @@ namespace CurrencyExchange.Controllers
 
         public NotificationsController(CurrencyExchangeContext context)
         {
-            currencies = CurrencyApiService.GetCurrencies();
+            currencies = CurrencyApiTools.GetCurrencies();
             _context = context;
         }
 
@@ -31,7 +30,7 @@ namespace CurrencyExchange.Controllers
             int userIdFromSession = Convert.ToInt32(HttpContext.Session.GetString("sessionUser"));
             if (userIdFromSession == id)
             {
-                List<Notification> notifications = await NotificationService.GetNotificationsAsync(id, true, false);
+                List<Notification> notifications = await NotificationTools.GetNotificationsAsync(id, true, false);
                 return View(notifications);
             }
             return RedirectToAction("Index", "Home");
