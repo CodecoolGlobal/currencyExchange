@@ -31,7 +31,7 @@ namespace CurrencyExchange.Controllers
             int userIdFromSession = Convert.ToInt32(HttpContext.Session.GetString("sessionUser"));
             if (userIdFromSession == id)
             {
-                List<Transaction> transactions = await TransferService.GetTransactionsAsync(id);
+                List<Transaction> transactions = await TransferService.GetTransactionsAsync(id, false);
                 return View(transactions);
             }
             return RedirectToAction("Index", "Home");
@@ -68,7 +68,7 @@ namespace CurrencyExchange.Controllers
         // more details see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Create([Bind("ID,Currency,Amount")] Transaction transaction, string RecipientEmail, string NowOrLater)
+        public async Task<IActionResult> Create([Bind("ID,Currency,Amount")] Transaction transaction, string RecipientEmail, string NowOrLater, DateTime date)
         {
             if (ModelState["Currency"].ValidationState.Equals(ModelValidationState.Valid) &&
                 ModelState["Amount"].ValidationState.Equals(ModelValidationState.Valid))
@@ -99,11 +99,23 @@ namespace CurrencyExchange.Controllers
                     AlertWrongEmail(e, RecipientEmail);
                     return View();
                 }
-                transaction.Date = DateTime.Now;
-                transaction.Status = "Completed";
+                if (NowOrLater.Equals("now"))
+                {
+                    transaction.Date = DateTime.Now;
+                    transaction.Status = "Completed";
+                }
+                else
+                {
+                    transaction.Date = date;
+                    transaction.Status = "Pending";
+                }
+
                 _context.Add(transaction);
                 await _context.SaveChangesAsync();
-                TransferService.SendMoney(transaction);
+                if (transaction.Status == "Completed")
+                {
+                    TransferService.SendMoney(transaction);
+                }
                 return RedirectToAction("Index", new RouteValueDictionary(
                          new { controller = "Transactions", action = "Index", id = userIdFromSession })
                      );
