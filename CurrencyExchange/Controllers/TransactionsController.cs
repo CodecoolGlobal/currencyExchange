@@ -102,17 +102,17 @@ namespace CurrencyExchange.Controllers
                 if (NowOrLater.Equals("now"))
                 {
                     transaction.Date = DateTime.Now;
-                    transaction.Status = "Completed";
+                    transaction.Status = Status.Completed;
                 }
                 else
                 {
                     transaction.Date = date;
-                    transaction.Status = "Pending";
+                    transaction.Status = Status.Pending;
                 }
 
                 _context.Add(transaction);
                 await _context.SaveChangesAsync();
-                if (transaction.Status == "Completed")
+                if (transaction.Status == Status.Completed)
                 {
                     TransferService.SendMoney(transaction);
                 }

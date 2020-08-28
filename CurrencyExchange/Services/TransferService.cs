@@ -20,12 +20,8 @@ namespace CurrencyExchange.Services
 
             if (TestScheduledTransfer)
             {
-                //interval is in miliseconds 
-                //1000 units = 1 second
-                //10000 = 10 seconds
-                //60000 = 1 minute
-                //3600000 = 1 hour
-                Timer timer = TimerTool.GenerateTimer(60000);
+                //interval is minutes
+                Timer timer = TimerTools.GenerateTimer(1);
                 timer.Elapsed += CheckTransactions;
             }
         }
@@ -78,7 +74,7 @@ namespace CurrencyExchange.Services
             foreach (Transaction transaction in transactionsToSend)
             {
                 SendMoney(transaction);
-                transaction.Status = "Completed";
+                transaction.Status = Status.Completed;
                 using (var context = new CurrencyExchangeContext(
                     _serviceProvider.GetRequiredService<
                         DbContextOptions<CurrencyExchangeContext>>()))

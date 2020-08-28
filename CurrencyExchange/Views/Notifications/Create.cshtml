@@ -44,9 +44,9 @@
                         <p> or </p>
                     </li>
                     <li>
-                        <input asp-for="AboveOrUnder" type="radio" id="above" value="above">
+                        <input asp-for="AboveOrUnder" type="radio" id="above" value="@AboveOrUnder.Above">
                         <label for="above">Above</label><br>
-                        <input asp-for="AboveOrUnder" type="radio" id="under" value="under">
+                        <input asp-for="AboveOrUnder" type="radio" id="under" value="@AboveOrUnder.Under">
                         <label for="under">Under</label><br>
                     </li>
                     <li>

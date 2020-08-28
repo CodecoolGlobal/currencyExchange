@@ -1,6 +1,5 @@
 ﻿using CurrencyExchange.Data;
 using CurrencyExchange.Models;
-using CurrencyExchange.Services;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.DependencyInjection;
 using System;

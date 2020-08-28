@@ -37,7 +37,7 @@ namespace CurrencyExchange.Tools
                     transactions = await context.Transactions
                         .Include(t => t.Sender)
                         .Include(t => t.Recipient)
-                        .Where(t => t.Status == "Pending").ToListAsync();
+                        .Where(t => t.Status == Status.Pending).ToListAsync();
                 }
             }
             return transactions;

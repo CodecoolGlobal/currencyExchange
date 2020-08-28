@@ -1,9 +1,5 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
-using System.Linq;
-using System.Reflection.Metadata.Ecma335;
-using System.Threading.Tasks;
 
 namespace CurrencyExchange.Models
 {
@@ -23,6 +19,13 @@ namespace CurrencyExchange.Models
 
         public DateTime Date { get; set; }
 
-        public string Status { get; set; }
+        [EnumDataType(typeof(Status))]
+        public Status Status { get; set; }
+    }
+
+    public enum Status
+    {
+        Pending = 0,
+        Completed = 1
     }
 }

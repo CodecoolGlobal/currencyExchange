@@ -16,16 +16,12 @@ namespace CurrencyExchange.Services
         public static void Initialize(IServiceProvider serviceProvider)
         {
             _serviceProvider = serviceProvider;
-            bool TestEmailSending = false;
+            bool TestEmailSending = true;
 
             if (TestEmailSending)
             {
-                //interval is in miliseconds 
-                //1000 units = 1 second
-                //10000 = 10 seconds
-                //60000 = 1 minute
-                //3600000 = 1 hour
-                Timer timer = TimerTool.GenerateTimer(10000);
+                //interval is minutes
+                Timer timer = TimerTools.GenerateTimer(1);
                 timer.Elapsed += CheckNotifications;
             }
         }
@@ -38,12 +34,12 @@ namespace CurrencyExchange.Services
             //check which notifications meet the criteria given by the users
             foreach (Notification notification in notifications)
             {
-                if (notification.AboveOrUnder.Equals("above") &&
+                if (notification.AboveOrUnder == AboveOrUnder.Above &&
                     notification.ActualValue >= notification.Value)
                 {
                     notificationsToSend.Add(notification);
                 }
-                if (notification.AboveOrUnder.Equals("under") &&
+                if (notification.AboveOrUnder == AboveOrUnder.Under &&
                     notification.ActualValue <= notification.Value)
                 {
                     notificationsToSend.Add(notification);
