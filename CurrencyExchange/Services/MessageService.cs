@@ -2,7 +2,6 @@
 using MailKit.Net.Imap;
 using MailKit.Net.Smtp;
 using MimeKit;
-using System.Transactions;
 
 namespace CurrencyExchange.Services
 {

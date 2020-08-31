@@ -9,7 +9,7 @@ using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc.ModelBinding;
 using Microsoft.Data.SqlClient;
 using System.Collections.Generic;
-using CurrencyExchange.Services;
+using CurrencyExchange.Tools;
 
 namespace CurrencyExchange.Controllers
 {
@@ -96,7 +96,7 @@ namespace CurrencyExchange.Controllers
                     if (passwordIsValid)
                     {
                         HttpContext.Session.SetString("sessionUser", userFromDb.ID.ToString());
-                        HttpContext.Session.SetString("sessionUserRole", userFromDb.Role);
+                        HttpContext.Session.SetString("sessionUserRole", userFromDb.Role.ToString());
                         return RedirectToAction("Index", "Home");
                     }
                 }
@@ -135,7 +135,7 @@ namespace CurrencyExchange.Controllers
             if (ModelState.IsValid)
             {
                 user.Password = BCrypt.Net.BCrypt.HashPassword(user.Password);
-                user.Role = "User";
+                user.Role = Role.User;
                 try
                 {
                     _context.Add(user);
@@ -353,7 +353,7 @@ namespace CurrencyExchange.Controllers
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> DeleteConfirmed(int id)
         {
-            List<Notification> notifications = await NotificationService.GetNotificationsAsync(id, false, false);
+            List<Notification> notifications = await NotificationTools.GetNotificationsAsync(id, false, false);
             foreach (Notification notification in notifications)
             {
                 _context.Notifications.Remove(notification);

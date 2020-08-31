@@ -5,9 +5,9 @@ using CurrencyExchange.Models;
 using Newtonsoft.Json;
 using RestSharp;
 
-namespace CurrencyExchange.Services
+namespace CurrencyExchange.Tools
 {
-    public class CurrencyApiService
+    public class CurrencyApiTools
     {
         public static decimal GetRate(Conversion conversion)
         {

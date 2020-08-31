@@ -4,56 +4,42 @@ using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.DependencyInjection;
 using System;
 using System.Collections.Generic;
-using System.Linq;
 using System.Timers;
-using System.Threading.Tasks;
+using CurrencyExchange.Tools;
 
 namespace CurrencyExchange.Services
 {
     public class NotificationService
     {
         private static IServiceProvider _serviceProvider;
+
         public static void Initialize(IServiceProvider serviceProvider)
         {
             _serviceProvider = serviceProvider;
-            Timer timer = new Timer();
-            timer.AutoReset = true;
-
-            //interval is in miliseconds 
-            //1000 units = 1 second
-            //10000 = 10 seconds
-            //60000 = 1 minute
-            //3600000 = 1 hour
-            timer.Interval = 10000;
-
-            timer.Elapsed += CheckNotifications;
-
-            bool TestEmailSending = false;
-
-            timer.Enabled = false;
+            bool TestEmailSending = true;
 
             if (TestEmailSending)
             {
-                timer.Enabled = true;
-                timer.Start();
+                //interval is minutes
+                Timer timer = TimerTools.GenerateTimer(1);
+                timer.Elapsed += CheckNotifications;
             }
-
         }
 
         private async static void CheckNotifications(object sender, EventArgs e)
         {
-            List<Notification> notifications = await GetNotificationsAsync(null, true, true);
+            List<Notification> notifications = await NotificationTools.GetNotificationsAsync(null, true, true);
             List<Notification> notificationsToSend = new List<Notification>();
 
             //check which notifications meet the criteria given by the users
             foreach (Notification notification in notifications)
             {
-                if (notification.AboveOrUnder.Equals("above") &&
+                if (notification.AboveOrUnder == AboveOrUnder.Above &&
                     notification.ActualValue >= notification.Value)
                 {
                     notificationsToSend.Add(notification);
                 }
-                if (notification.AboveOrUnder.Equals("under") &&
+                if (notification.AboveOrUnder == AboveOrUnder.Under &&
                     notification.ActualValue <= notification.Value)
                 {
                     notificationsToSend.Add(notification);
@@ -73,50 +59,6 @@ namespace CurrencyExchange.Services
                     await context.SaveChangesAsync();
                 }
             }
-        }
-
-        public static async Task<List<Notification>> GetNotificationsAsync(int? id, bool CurrencyNeeded, bool UnsentOnly)
-        {
-            List<Notification> notifications = new List<Notification>();
-            using (var context = new CurrencyExchangeContext(
-                    _serviceProvider.GetRequiredService<
-                        DbContextOptions<CurrencyExchangeContext>>()))
-            {
-                if (id == null)
-                {
-                    if (UnsentOnly)
-                    {
-                        notifications = await context.Notifications.Include(n => n.User)
-                            .Where(n => n.EmailSent == false)
-                            .ToListAsync();
-                    }
-                    else
-                    {
-                        notifications = await context.Notifications.Include(n => n.User)
-                            .ToListAsync();
-                    }
-                }
-                else
-                {
-                    notifications = await context.Notifications.Include(n => n.User)
-                       .Where(n => n.User.ID == id)
-                       .ToListAsync();
-                }
-            }
-
-            //I have to show the actual value for each note
-            if (CurrencyNeeded)
-            {
-                foreach (Notification notification in notifications)
-                {
-                    Conversion conversion = new Conversion();
-                    conversion.BaseCurrency = notification.BaseCurrency;
-                    conversion.EndCurrency = notification.EndCurrency;
-                    conversion.Amount = notification.Value;
-                    notification.ActualValue = CurrencyApiService.GetRate(conversion);
-                }
-            }
-            return notifications;
         }
     }
 }

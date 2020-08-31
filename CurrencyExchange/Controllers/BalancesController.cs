@@ -3,13 +3,12 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
 using CurrencyExchange.Data;
 using CurrencyExchange.Models;
-using CurrencyExchange.Services;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Routing;
+using CurrencyExchange.Tools;
 
 namespace CurrencyExchange.Controllers
 {
@@ -20,7 +19,7 @@ namespace CurrencyExchange.Controllers
 
         public BalancesController(CurrencyExchangeContext context)
         {
-            currencies = CurrencyApiService.GetCurrencies();
+            currencies = CurrencyApiTools.GetCurrencies();
             _context = context;
         }
 
@@ -31,7 +30,7 @@ namespace CurrencyExchange.Controllers
             int userIdFromSession = Convert.ToInt32(HttpContext.Session.GetString("sessionUser"));
             if (userIdFromSession == id)
             {
-                List<Balance> balances = await BalanceService.GetBalancesAsync(id);
+                List<Balance> balances = await BalanceTools.GetBalancesAsync(id);
                 return View(balances);
             }
             return RedirectToAction("Index", "Home");
@@ -57,13 +56,13 @@ namespace CurrencyExchange.Controllers
                 User userFromDb = _context.Users.Where(userToRead => userToRead.ID == userIdFromSession).First();
 
                 //check if user has a balance with the same currency
-                List<Balance> balances = await BalanceService.GetBalancesAsync(userIdFromSession);
+                List<Balance> balances = await BalanceTools.GetBalancesAsync(userIdFromSession);
                 bool AlreadyExists = false;
                 foreach (Balance b in balances)
                 {
                     if (b.Currency == balance.Currency)
                     {
-                        BalanceService.EditBalance(b, balance.Amount);
+                        BalanceTools.EditBalance(b, balance.Amount);
                         AlreadyExists = true;
                         break;
                     }
@@ -108,7 +107,7 @@ namespace CurrencyExchange.Controllers
             int userIdFromSession = Convert.ToInt32(HttpContext.Session.GetString("sessionUser"));
             if (userIdFromSession == balance.User.ID)
             {
-                BalanceService.EditBalance(balance, amount);
+                BalanceTools.EditBalance(balance, amount);
                 return RedirectToAction("Index", new RouteValueDictionary(
                        new { controller = "Balances", action = "Index", id = userIdFromSession }));
             }
@@ -129,7 +128,7 @@ namespace CurrencyExchange.Controllers
         public async Task<IActionResult> ConvertMoneyAsync(Conversion conversion)
         {
             int userIdFromSession = Convert.ToInt32(HttpContext.Session.GetString("sessionUser"));
-            int amount = (int)((int)CurrencyApiService.GetRate(conversion) * conversion.Amount);
+            int amount = (int)((int)CurrencyApiTools.GetRate(conversion) * conversion.Amount);
 
             bool AlreadyExists = _context.Balances
                 .Include(b => b.User)
@@ -143,7 +142,7 @@ namespace CurrencyExchange.Controllers
                     .Where(b => b.User.ID == userIdFromSession)
                     .Where(b => b.Currency == conversion.EndCurrency)
                     .FirstOrDefaultAsync();
-                BalanceService.EditBalance(balance, amount);
+                BalanceTools.EditBalance(balance, amount);
             }
             else
             {
@@ -158,7 +157,7 @@ namespace CurrencyExchange.Controllers
                     .Where(b => b.User.ID == userIdFromSession)
                     .Where(b => b.Currency == conversion.BaseCurrency)
                     .FirstOrDefaultAsync();
-            BalanceService.EditBalance(original, (int)conversion.Amount * -1);
+            BalanceTools.EditBalance(original, (int)conversion.Amount * -1);
             return RedirectToAction("Index", new RouteValueDictionary(
                        new
                        {

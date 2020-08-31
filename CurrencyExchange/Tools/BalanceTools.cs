@@ -7,9 +7,9 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 
-namespace CurrencyExchange.Services
+namespace CurrencyExchange.Tools
 {
-    public class BalanceService
+    public class BalanceTools
     {
         private static IServiceProvider _serviceProvider;
         public static void Initialize(IServiceProvider serviceProvider)

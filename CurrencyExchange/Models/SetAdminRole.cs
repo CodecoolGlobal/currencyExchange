@@ -15,7 +15,7 @@ namespace CurrencyExchange.Models
                         DbContextOptions<CurrencyExchangeContext>>()))
             {
                 var user = context.Users.First(u => u.ID == id);
-                user.Role = "Admin";
+                user.Role = Role.Admin;
                 context.Update(user);
                 context.SaveChanges();
             }

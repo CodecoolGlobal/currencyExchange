@@ -26,6 +26,12 @@ namespace CurrencyExchange.Models
         [Compare("Password")]
         public string ConfirmPassword { get; set; }
 
-        public string Role { get; set; }
+        public Role Role { get; set; }
+    }
+
+    public enum Role
+    {
+        User = 0,
+        Admin = 1
     }
 }

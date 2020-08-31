@@ -21,7 +21,8 @@ namespace CurrencyExchange.Models
 
         [Display(Name = "Above Or Under")]
         [Required]
-        public string AboveOrUnder { get; set; }
+        [EnumDataType(typeof(AboveOrUnder))]
+        public AboveOrUnder AboveOrUnder { get; set; }
 
         public bool EmailSent { get; set; }
 
@@ -29,5 +30,11 @@ namespace CurrencyExchange.Models
         [Display(Name = "Actual Value")]
         [DisplayFormat(DataFormatString = "{0:0.000}")]
         public decimal ActualValue { get; set; }
+    }
+
+    public enum AboveOrUnder
+    {
+            Above = 0,
+            Under = 1
     }
 }
