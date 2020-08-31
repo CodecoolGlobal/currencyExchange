@@ -96,7 +96,7 @@ namespace CurrencyExchange.Controllers
                     if (passwordIsValid)
                     {
                         HttpContext.Session.SetString("sessionUser", userFromDb.ID.ToString());
-                        HttpContext.Session.SetString("sessionUserRole", userFromDb.Role);
+                        HttpContext.Session.SetString("sessionUserRole", userFromDb.Role.ToString());
                         return RedirectToAction("Index", "Home");
                     }
                 }
@@ -135,7 +135,7 @@ namespace CurrencyExchange.Controllers
             if (ModelState.IsValid)
             {
                 user.Password = BCrypt.Net.BCrypt.HashPassword(user.Password);
-                user.Role = "User";
+                user.Role = Role.User;
                 try
                 {
                     _context.Add(user);
