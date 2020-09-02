@@ -126,20 +126,13 @@ namespace CurrencyExchange.Controllers
         public async Task<FileResult> DownloadStatementAsync()
         {
             int userIdFromSession = Convert.ToInt32(HttpContext.Session.GetString("sessionUser"));
-            int month = DateTime.Today.Month;
             int year = DateTime.Today.Year;
+            int month = DateTime.Today.Month;
 
-            await StatementService.ComposeStatementAsync(userIdFromSession, year, month);
-            string Path = "./Resources/statement.txt";
-            byte[] fileBytes = System.IO.File.ReadAllBytes(Path);
-            string fileName = "myfile.txt";
+            Statement statement = await StatementService.ComposeStatementAsync(userIdFromSession, year, month);
+            byte[] fileBytes = System.IO.File.ReadAllBytes(statement.FilePath);
+            string fileName = $"statement_{year}_{month}.pdf";
             return File(fileBytes, System.Net.Mime.MediaTypeNames.Application.Octet, fileName);
-
-
-
-            //return RedirectToAction("Index", new RouteValueDictionary(
-            //             new { controller = "Transactions", action = "Index", id = userIdFromSession })
-            //         );
         }
 
         private bool TransactionExists(int id)
