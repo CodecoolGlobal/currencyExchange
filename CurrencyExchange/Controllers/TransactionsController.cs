@@ -129,8 +129,8 @@ namespace CurrencyExchange.Controllers
             int year = DateTime.Today.Year;
             int month = DateTime.Today.Month;
 
-            Statement statement = await StatementService.ComposeStatementAsync(userIdFromSession, year, month);
-            byte[] fileBytes = System.IO.File.ReadAllBytes(statement.FilePath);
+            string FilePath = await StatementService.ComposeStatementAsync(userIdFromSession, year, month);
+            byte[] fileBytes = System.IO.File.ReadAllBytes(FilePath);
             string fileName = $"statement_{year}_{month}.pdf";
             return File(fileBytes, System.Net.Mime.MediaTypeNames.Application.Octet, fileName);
         }
