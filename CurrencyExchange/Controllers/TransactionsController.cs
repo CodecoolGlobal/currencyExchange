@@ -123,6 +123,20 @@ namespace CurrencyExchange.Controllers
             return View(transaction);
         }
 
+        public FileResult DownloadStatement()
+        {
+            string Path = "./Resources/statement.txt";
+            byte[] fileBytes = System.IO.File.ReadAllBytes(Path);
+            string fileName = "myfile.txt";
+            return File(fileBytes, System.Net.Mime.MediaTypeNames.Application.Octet, fileName);
+            
+            
+            
+            //int userIdFromSession = Convert.ToInt32(HttpContext.Session.GetString("sessionUser"));
+            //return RedirectToAction("Index", new RouteValueDictionary(
+            //             new { controller = "Transactions", action = "Index", id = userIdFromSession })
+            //         );
+        }
 
         private bool TransactionExists(int id)
         {

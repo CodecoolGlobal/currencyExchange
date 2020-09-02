@@ -6,7 +6,7 @@ namespace CurrencyExchange.Tools
     {
         public static Timer GenerateTimer(int interval)
         {
-            //interval is in minutes
+            //interval input is in minutes
             interval *= 60000;
             //1000 units = 1 second
             //10000 = 10 seconds
