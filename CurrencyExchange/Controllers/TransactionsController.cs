@@ -31,7 +31,7 @@ namespace CurrencyExchange.Controllers
             int userIdFromSession = Convert.ToInt32(HttpContext.Session.GetString("sessionUser"));
             if (userIdFromSession == id)
             {
-                List<Transaction> transactions = await TransactionTools.GetTransactionsAsync(id, false);
+                List<Transaction> transactions = await TransactionTools.GetTransactionsAsync(id);
                 return View(transactions);
             }
             return RedirectToAction("Index", "Home");
@@ -123,16 +123,20 @@ namespace CurrencyExchange.Controllers
             return View(transaction);
         }
 
-        public FileResult DownloadStatement()
+        public async Task<FileResult> DownloadStatementAsync()
         {
+            int userIdFromSession = Convert.ToInt32(HttpContext.Session.GetString("sessionUser"));
+            int month = DateTime.Today.Month;
+            int year = DateTime.Today.Year;
+
+            await StatementService.ComposeStatementAsync(userIdFromSession, year, month);
             string Path = "./Resources/statement.txt";
             byte[] fileBytes = System.IO.File.ReadAllBytes(Path);
             string fileName = "myfile.txt";
             return File(fileBytes, System.Net.Mime.MediaTypeNames.Application.Octet, fileName);
-            
-            
-            
-            //int userIdFromSession = Convert.ToInt32(HttpContext.Session.GetString("sessionUser"));
+
+
+
             //return RedirectToAction("Index", new RouteValueDictionary(
             //             new { controller = "Transactions", action = "Index", id = userIdFromSession })
             //         );

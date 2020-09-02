@@ -17,29 +17,54 @@ namespace CurrencyExchange.Tools
             _serviceProvider = serviceProvider;
         }
 
-        public static async Task<List<Transaction>> GetTransactionsAsync(int? id, bool checkPending)
+        public static async Task<List<Transaction>> GetTransactionsAsync(int? id)
         {
             List<Transaction> transactions = new List<Transaction>();
             using (var context = new CurrencyExchangeContext(
                     _serviceProvider.GetRequiredService<
                         DbContextOptions<CurrencyExchangeContext>>()))
             {
-                if (id != null)
-                {
-                    User user = context.Users.Find(id);
-                    transactions = await context.Transactions
+                User user = context.Users.Find(id);
+                transactions = await context.Transactions
+                    .Include(t => t.Sender)
+                    .Include(t => t.Recipient)
+                    .Where(t => t.Sender == user || t.Recipient == user)
+                    .OrderByDescending(t => t.Date).ToListAsync();
+            }
+            return transactions;
+        }
+
+        public static async Task<List<Transaction>> GetTransactionsAsync(bool checkPending)
+        {
+            List<Transaction> transactions = new List<Transaction>();
+            using (var context = new CurrencyExchangeContext(
+                    _serviceProvider.GetRequiredService<
+                        DbContextOptions<CurrencyExchangeContext>>()))
+            {
+                transactions = await context.Transactions
                         .Include(t => t.Sender)
                         .Include(t => t.Recipient)
-                        .Where(t => t.Sender == user || t.Recipient == user)
-                        .OrderByDescending(t => t.Date).ToListAsync();
-                }
-                if (checkPending)
-                {
-                    transactions = await context.Transactions
-                        .Include(t => t.Sender)
-                        .Include(t => t.Recipient)
-                        .Where(t => t.Status == Status.Pending).ToListAsync();
-                }
+                        .Where(t => t.Status == Status.Pending)
+                        .Where(t => t.Date.CompareTo(DateTime.Now) < 1).ToListAsync();
+            }
+            return transactions;
+        }
+
+        public static async Task<List<Transaction>> GetTransactionsAsync(int id, int year, int month)
+        {
+            List<Transaction> transactions = new List<Transaction>();
+            using (var context = new CurrencyExchangeContext(
+                    _serviceProvider.GetRequiredService<
+                        DbContextOptions<CurrencyExchangeContext>>()))
+            {
+                User user = context.Users.Find(id);
+                transactions = await context.Transactions
+                    .Include(t => t.Sender)
+                    .Include(t => t.Recipient)
+                    .Where(t => t.Sender == user || t.Recipient == user)
+                    .Where(t => t.Date.Year == year)
+                    .Where(t => t.Date.Month == month)
+                    .OrderByDescending(t => t.Date).ToListAsync();
             }
             return transactions;
         }
