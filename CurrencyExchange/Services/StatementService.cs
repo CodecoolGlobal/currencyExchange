@@ -3,6 +3,7 @@ using CurrencyExchange.Tools;
 using PdfSharp.Drawing;
 using PdfSharp.Pdf;
 using PdfSharp.Pdf.IO;
+using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;
 
@@ -12,14 +13,18 @@ namespace CurrencyExchange.Services
     {
         private static readonly string TemplatePath = "./Resources/statement_template.pdf";
 
-        public static async Task<string> ComposeStatementAsync(int id, int year, int month)
+        public static async Task<string> ComposeStatementAsync(int id, DateTime startDate, DateTime endDate)
         {
-            string FilePath = CreateFilePath(id, year, month);
-            List<Transaction> transactions = await TransactionTools.GetTransactionsAsync(id, year, month);
+            string startDateStr = StatementTools.GetDateString(startDate);
+            string endDateStr = StatementTools.GetDateString(endDate);
+            User user = SQLTools.GetUserById(id);
+
+            string FilePath = CreateFilePath(user, startDateStr, endDateStr);
+            List<Transaction> transactions = await TransactionTools.GetTransactionsAsync(id, startDate, endDate);
 
             PdfDocument pdf = new PdfDocument();
             PdfDocument template = PdfReader.Open(TemplatePath, PdfDocumentOpenMode.Import);
-            pdf.Info.Title = "Database to PDF";
+            pdf.Info.Title = "Transactions Statement";
             PdfPage pdfPage = pdf.AddPage(template.Pages[0]);
 
             XGraphics graph = XGraphics.FromPdfPage(pdfPage);
@@ -29,7 +34,7 @@ namespace CurrencyExchange.Services
 
             foreach (Transaction transaction in transactions)
             {
-                string header = $"transactions of {SQLTools.GetUserById(id).UserName} in {year}.{month}";
+                string header = $"transactions of {user.UserName} between {startDateStr} and {endDateStr}";
                 string date = transaction.Date.ToString();
                 string sender = transaction.Sender.UserName;
                 string recipient = transaction.Recipient.UserName;
@@ -50,10 +55,9 @@ namespace CurrencyExchange.Services
             return FilePath;
         }
 
-        private static string CreateFilePath(int id, int year, int month)
+        private static string CreateFilePath(User user, string startDateStr, string endDateStr)
         {
-            User user = SQLTools.GetUserById(id);
-            string pdfFilename = $"./Resources/Statements/{user.UserName}_{year}_{month}.pdf";
+            string pdfFilename = $"./Resources/Statements/{user.UserName}_{startDateStr}-{endDateStr}.pdf";
             return pdfFilename;
         }
     }

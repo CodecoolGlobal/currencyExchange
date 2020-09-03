@@ -124,14 +124,17 @@ namespace CurrencyExchange.Controllers
             return View(transaction);
         }
 
-        public async Task<FileResult> DownloadStatementAsync()
+        [HttpPost]
+        public async Task<FileResult> DownloadStatementAsync(DateTime startDate, DateTime endDate)
         {
             int userIdFromSession = Convert.ToInt32(HttpContext.Session.GetString("sessionUser"));
-            int year = DateTime.Today.Year;
-            int month = DateTime.Today.Month;
+            endDate = endDate.AddHours(23).AddMinutes(59).AddSeconds(59);
 
-            string FilePath = await StatementService.ComposeStatementAsync(userIdFromSession, year, month);
-            string fileName = $"statement_{year}_{month}.pdf";
+            string startDateStr = StatementTools.GetDateString(startDate);
+            string endDateStr = StatementTools.GetDateString(endDate);
+
+            string FilePath = await StatementService.ComposeStatementAsync(userIdFromSession, startDate, endDate);
+            string fileName = $"statement_{startDateStr}_{endDateStr}.pdf";
             FileStream fs = new FileStream(FilePath, FileMode.Open, FileAccess.Read, FileShare.None, 4096, FileOptions.DeleteOnClose);
             return File(fs, System.Net.Mime.MediaTypeNames.Application.Octet, fileName);
         }

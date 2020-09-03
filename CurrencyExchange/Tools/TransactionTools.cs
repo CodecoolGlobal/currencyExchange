@@ -50,7 +50,7 @@ namespace CurrencyExchange.Tools
             return transactions;
         }
 
-        public static async Task<List<Transaction>> GetTransactionsAsync(int id, int year, int month)
+        public static async Task<List<Transaction>> GetTransactionsAsync(int id, DateTime startDate, DateTime endDate)
         {
             List<Transaction> transactions = new List<Transaction>();
             using (var context = new CurrencyExchangeContext(
@@ -62,8 +62,9 @@ namespace CurrencyExchange.Tools
                     .Include(t => t.Sender)
                     .Include(t => t.Recipient)
                     .Where(t => t.Sender == user || t.Recipient == user)
-                    .Where(t => t.Date.Year == year)
-                    .Where(t => t.Date.Month == month)
+                    .Where(t => t.Date >= startDate)
+                    .Where(t => t.Date <= endDate)
+                    .Where(t => t.Status == Status.Completed)
                     .OrderByDescending(t => t.Date).ToListAsync();
             }
             return transactions;

@@ -24,5 +24,23 @@ namespace CurrencyExchange.Tools
                 await context.SaveChangesAsync();
             }
         }
+
+        public static string GetDateString(DateTime date)
+        {
+            string dateStr = date.Year.ToString();
+            dateStr += ".";
+            if(date.Month < 10)
+            {
+                dateStr += "0";
+            }
+            dateStr += date.Month.ToString();
+            dateStr += ".";
+            if (date.Day < 10)
+            {
+                dateStr += "0";
+            }
+            dateStr += date.Day.ToString();
+            return dateStr;
+        }
     }
 }
