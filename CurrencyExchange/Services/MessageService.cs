@@ -56,7 +56,7 @@ namespace CurrencyExchange.Services
             SendMail(email);
         }
 
-        public static void ComposeTransactionEmail(Models.Transaction transaction)
+        public static void ComposeTransactionEmail(Transaction transaction)
         {
             string Currency = transaction.Currency;
             string Amount = transaction.Amount.ToString();

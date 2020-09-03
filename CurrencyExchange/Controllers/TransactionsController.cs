@@ -11,6 +11,7 @@ using CurrencyExchange.Services;
 using Microsoft.AspNetCore.Mvc.ModelBinding;
 using Microsoft.AspNetCore.Routing;
 using CurrencyExchange.Tools;
+using System.IO;
 
 namespace CurrencyExchange.Controllers
 {
@@ -31,7 +32,7 @@ namespace CurrencyExchange.Controllers
             int userIdFromSession = Convert.ToInt32(HttpContext.Session.GetString("sessionUser"));
             if (userIdFromSession == id)
             {
-                List<Transaction> transactions = await TransactionTools.GetTransactionsAsync(id, false);
+                List<Transaction> transactions = await TransactionTools.GetTransactionsAsync(id);
                 return View(transactions);
             }
             return RedirectToAction("Index", "Home");
@@ -123,6 +124,21 @@ namespace CurrencyExchange.Controllers
             return View(transaction);
         }
 
+        [HttpPost]
+        public async Task<FileResult> DownloadStatementAsync(DateTime startDate, DateTime endDate)
+        {
+            int userIdFromSession = Convert.ToInt32(HttpContext.Session.GetString("sessionUser"));
+            endDate = endDate.AddHours(23).AddMinutes(59).AddSeconds(59);
+
+            string startDateStr = StatementTools.GetDateString(startDate);
+            string endDateStr = StatementTools.GetDateString(endDate);
+
+            string FilePath = await StatementService.ComposeStatementAsync(userIdFromSession, startDate, endDate);
+            string fileName = $"statement_{startDateStr}_{endDateStr}.pdf";
+            FileStream fs = new FileStream(FilePath, FileMode.Open, FileAccess.Read, FileShare.None, 4096, FileOptions.DeleteOnClose);
+            return File(fs, System.Net.Mime.MediaTypeNames.Application.Octet, fileName);
+        }
+
         public IActionResult Cancel(int id)
         {
             int userIdFromSession = Convert.ToInt32(HttpContext.Session.GetString("sessionUser"));
@@ -141,7 +157,6 @@ namespace CurrencyExchange.Controllers
                          new { controller = "Transactions", action = "Index", id = userIdFromSession })
                      );
         }
-
 
         private bool TransactionExists(int id)
         {

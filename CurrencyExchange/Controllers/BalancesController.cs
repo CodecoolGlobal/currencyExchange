@@ -53,7 +53,7 @@ namespace CurrencyExchange.Controllers
             if (ModelState.IsValid)
             {
                 int userIdFromSession = Convert.ToInt32(HttpContext.Session.GetString("sessionUser"));
-                User userFromDb = _context.Users.Where(userToRead => userToRead.ID == userIdFromSession).First();
+                User userFromDb = SQLTools.GetUserById(userIdFromSession);
 
                 //check if user has a balance with the same currency
                 List<Balance> balances = await BalanceTools.GetBalancesAsync(userIdFromSession);

@@ -36,6 +36,8 @@ namespace CurrencyExchange
             BalanceTools.Initialize(services);
             NotificationTools.Initialize(services);
             TransactionTools.Initialize(services);
+            SQLTools.Initialize(services);
+            StatementTools.Initialize(services);
         }
 
         public static IHostBuilder CreateHostBuilder(string[] args) =>

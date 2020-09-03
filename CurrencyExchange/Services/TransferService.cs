@@ -58,20 +58,10 @@ namespace CurrencyExchange.Services
 
         private async static void CheckTransactions(object sender, EventArgs e)
         {
-            List<Transaction> transactions = await TransactionTools.GetTransactionsAsync(null, true);
-            List<Transaction> transactionsToSend = new List<Transaction>();
-
-            //check which transactions are scheduled to send now
-            foreach (Transaction transaction in transactions)
-            {
-                if (transaction.Date.CompareTo(DateTime.Now) < 1)
-                {
-                    transactionsToSend.Add(transaction);
-                }
-            }
+            List<Transaction> transactions = await TransactionTools.GetTransactionsAsync(true);
 
             //send those transactions
-            foreach (Transaction transaction in transactionsToSend)
+            foreach (Transaction transaction in transactions)
             {
                 SendMoney(transaction);
                 transaction.Status = Status.Completed;

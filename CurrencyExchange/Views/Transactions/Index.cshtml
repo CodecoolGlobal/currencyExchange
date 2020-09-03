@@ -8,7 +8,15 @@
 
 <p>
     <a asp-action="Create">Create New</a>
+    @*<a asp-action="DownloadStatement">Download Statement</a>*@
 </p>
+    <form asp-action="DownloadStatement">
+        <label>Start Date</label>
+        <input type="date" name="startDate"/>
+        <label>End Date</label>
+        <input type="date" name="endDate"/>
+        <input type="submit" value="Download Statement"/>
+    </form>
 <table class="table">
     <thead>
         <tr>
