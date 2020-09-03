@@ -29,12 +29,14 @@ namespace CurrencyExchange.Services
 
             foreach (Transaction transaction in transactions)
             {
+                string header = $"transactions of {SQLTools.GetUserById(id).UserName} in {year}.{month}";
                 string date = transaction.Date.ToString();
                 string sender = transaction.Sender.UserName;
                 string recipient = transaction.Recipient.UserName;
                 string currency = transaction.Currency;
                 string amount = transaction.Amount.ToString();
 
+                graph.DrawString(header, font, XBrushes.Black, new XRect(220, 20, pdfPage.Width.Point, pdfPage.Height.Point), XStringFormats.TopLeft);
                 graph.DrawString(date, font, XBrushes.Black, new XRect(40, yPoint, pdfPage.Width.Point, pdfPage.Height.Point), XStringFormats.TopLeft);
                 graph.DrawString(sender, font, XBrushes.Black, new XRect(220, yPoint, pdfPage.Width.Point, pdfPage.Height.Point), XStringFormats.TopLeft);
                 graph.DrawString(recipient, font, XBrushes.Black, new XRect(300, yPoint, pdfPage.Width.Point, pdfPage.Height.Point), XStringFormats.TopLeft);

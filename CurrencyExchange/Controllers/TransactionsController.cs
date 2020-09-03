@@ -11,6 +11,7 @@ using CurrencyExchange.Services;
 using Microsoft.AspNetCore.Mvc.ModelBinding;
 using Microsoft.AspNetCore.Routing;
 using CurrencyExchange.Tools;
+using System.IO;
 
 namespace CurrencyExchange.Controllers
 {
@@ -130,9 +131,9 @@ namespace CurrencyExchange.Controllers
             int month = DateTime.Today.Month;
 
             string FilePath = await StatementService.ComposeStatementAsync(userIdFromSession, year, month);
-            byte[] fileBytes = System.IO.File.ReadAllBytes(FilePath);
             string fileName = $"statement_{year}_{month}.pdf";
-            return File(fileBytes, System.Net.Mime.MediaTypeNames.Application.Octet, fileName);
+            FileStream fs = new FileStream(FilePath, FileMode.Open, FileAccess.Read, FileShare.None, 4096, FileOptions.DeleteOnClose);
+            return File(fs, System.Net.Mime.MediaTypeNames.Application.Octet, fileName);
         }
 
         private bool TransactionExists(int id)
