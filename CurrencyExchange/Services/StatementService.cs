@@ -2,6 +2,7 @@
 using CurrencyExchange.Tools;
 using PdfSharp.Drawing;
 using PdfSharp.Pdf;
+using PdfSharp.Pdf.IO;
 using System.Collections.Generic;
 using System.Threading.Tasks;
 
@@ -9,14 +10,18 @@ namespace CurrencyExchange.Services
 {
     public class StatementService
     {
+        private static readonly string TemplatePath = "./Resources/statement_template.pdf";
+
         public static async Task<string> ComposeStatementAsync(int id, int year, int month)
         {
             string FilePath = CreateFilePath(id, year, month);
             List<Transaction> transactions = await TransactionTools.GetTransactionsAsync(id, year, month);
 
-            PdfDocument pdf = new PdfDocument();
+
+            //PdfDocument template = PdfReader.Open(TemplatePath);
+            PdfDocument pdf = PdfReader.Open(TemplatePath, PdfDocumentOpenMode.Modify);
             pdf.Info.Title = "Database to PDF";
-            PdfPage pdfPage = pdf.AddPage();
+            PdfPage pdfPage = new PdfPage(pdf);
             XGraphics graph = XGraphics.FromPdfPage(pdfPage);
             XFont font = new XFont("Verdana", 10, XFontStyle.Regular);
 
