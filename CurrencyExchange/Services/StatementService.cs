@@ -17,10 +17,11 @@ namespace CurrencyExchange.Services
             string FilePath = CreateFilePath(id, year, month);
             List<Transaction> transactions = await TransactionTools.GetTransactionsAsync(id, year, month);
 
-
-            PdfDocument pdf = PdfReader.Open(TemplatePath, PdfDocumentOpenMode.Modify);
+            PdfDocument pdf = new PdfDocument();
+            PdfDocument template = PdfReader.Open(TemplatePath, PdfDocumentOpenMode.Import);
             pdf.Info.Title = "Database to PDF";
-            PdfPage pdfPage = new PdfPage(pdf);
+            PdfPage pdfPage = pdf.AddPage(template.Pages[0]);
+
             XGraphics graph = XGraphics.FromPdfPage(pdfPage);
             XFont font = new XFont("Verdana", 10, XFontStyle.Regular);
 
@@ -35,10 +36,10 @@ namespace CurrencyExchange.Services
                 string amount = transaction.Amount.ToString();
 
                 graph.DrawString(date, font, XBrushes.Black, new XRect(40, yPoint, pdfPage.Width.Point, pdfPage.Height.Point), XStringFormats.TopLeft);
-                graph.DrawString(sender, font, XBrushes.Black, new XRect(230, yPoint, pdfPage.Width.Point, pdfPage.Height.Point), XStringFormats.TopLeft);
-                graph.DrawString(recipient, font, XBrushes.Black, new XRect(280, yPoint, pdfPage.Width.Point, pdfPage.Height.Point), XStringFormats.TopLeft);
+                graph.DrawString(sender, font, XBrushes.Black, new XRect(220, yPoint, pdfPage.Width.Point, pdfPage.Height.Point), XStringFormats.TopLeft);
+                graph.DrawString(recipient, font, XBrushes.Black, new XRect(300, yPoint, pdfPage.Width.Point, pdfPage.Height.Point), XStringFormats.TopLeft);
                 graph.DrawString(currency, font, XBrushes.Black, new XRect(400, yPoint, pdfPage.Width.Point, pdfPage.Height.Point), XStringFormats.TopLeft);
-                graph.DrawString(amount, font, XBrushes.Black, new XRect(440, yPoint, pdfPage.Width.Point, pdfPage.Height.Point), XStringFormats.TopLeft);
+                graph.DrawString(amount, font, XBrushes.Black, new XRect(470, yPoint, pdfPage.Width.Point, pdfPage.Height.Point), XStringFormats.TopLeft);
 
                 yPoint = yPoint + 40;
             }
