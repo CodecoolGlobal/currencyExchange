@@ -139,6 +139,25 @@ namespace CurrencyExchange.Controllers
             return File(fs, System.Net.Mime.MediaTypeNames.Application.Octet, fileName);
         }
 
+        public IActionResult Cancel(int id)
+        {
+            int userIdFromSession = Convert.ToInt32(HttpContext.Session.GetString("sessionUser"));
+            User user = _context.Users.Where(u => u.ID == userIdFromSession).First();
+            Transaction transaction = TransactionTools.GetTransactionById(id);
+            if(transaction.Sender.ID == user.ID)
+            {
+                if(transaction.Status == Status.Pending)
+                {
+                    transaction.Status = Status.Cancelled;
+                    _context.Entry(transaction).Property("Status").IsModified = true;
+                     _context.SaveChanges();
+                }
+            }
+            return RedirectToAction("Index", new RouteValueDictionary(
+                         new { controller = "Transactions", action = "Index", id = userIdFromSession })
+                     );
+        }
+
         private bool TransactionExists(int id)
         {
             return _context.Transactions.Any(e => e.ID == id);
