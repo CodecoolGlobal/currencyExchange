@@ -146,7 +146,7 @@ namespace CurrencyExchange.Controllers
             }
             else
             {
-                User user = _context.Users.Find(userIdFromSession);
+                User user = SQLTools.GetUserById(userIdFromSession);
                 Balance balance = new Balance() { Amount = amount, Currency = conversion.EndCurrency };
                 balance.User = user;
                 _context.Balances.Add(balance);

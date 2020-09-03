@@ -28,7 +28,7 @@ namespace CurrencyExchange.Tools
                 transactions = await context.Transactions
                     .Include(t => t.Sender)
                     .Include(t => t.Recipient)
-                    .Where(t => t.Sender == user || t.Recipient == user)
+                    .Where(t => t.Sender == user || (t.Recipient == user && t.Status == Status.Completed))
                     .OrderByDescending(t => t.Date).ToListAsync();
             }
             return transactions;

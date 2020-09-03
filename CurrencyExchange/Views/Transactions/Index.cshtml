@@ -67,7 +67,7 @@
                     <a asp-action="Details" asp-route-id="@item.ID">Details</a>
                     @if (item.Status == Status.Pending)
                     {
-                        <a asp-action="Cancel" asp-route-id="@item.ID">Cancel</a>
+                        <a asp-action="CancelTransaction" asp-route-id="@item.ID">Cancel</a>
                     }
                 </td>
             </tr>

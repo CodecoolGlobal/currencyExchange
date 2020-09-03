@@ -59,8 +59,8 @@ namespace CurrencyExchange.Controllers
             if (ModelState.IsValid)
             {
                 int userIdFromSession = Convert.ToInt32(HttpContext.Session.GetString("sessionUser"));
-                User userFromDb = _context.Users.Where(userToRead => userToRead.ID == userIdFromSession).First();
-                notification.User = userFromDb;
+                User user = SQLTools.GetUserById(userIdFromSession);
+                notification.User = user;
                 notification.EmailSent = false;
                 _context.Add(notification);
                 await _context.SaveChangesAsync();

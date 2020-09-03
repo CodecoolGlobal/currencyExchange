@@ -75,7 +75,7 @@ namespace CurrencyExchange.Controllers
                 ModelState["Amount"].ValidationState.Equals(ModelValidationState.Valid))
             {
                 int userIdFromSession = Convert.ToInt32(HttpContext.Session.GetString("sessionUser"));
-                User sender = _context.Users.Where(u => u.ID == userIdFromSession).First();
+                User sender = SQLTools.GetUserById(userIdFromSession);
                 transaction.Sender = sender;
 
                 if (!CurrencyOwned(transaction))
@@ -124,25 +124,10 @@ namespace CurrencyExchange.Controllers
             return View(transaction);
         }
 
-        [HttpPost]
-        public async Task<FileResult> DownloadStatementAsync(DateTime startDate, DateTime endDate)
+        public IActionResult CancelTransaction(int id)
         {
             int userIdFromSession = Convert.ToInt32(HttpContext.Session.GetString("sessionUser"));
-            endDate = endDate.AddHours(23).AddMinutes(59).AddSeconds(59);
-
-            string startDateStr = StatementTools.GetDateString(startDate);
-            string endDateStr = StatementTools.GetDateString(endDate);
-
-            string FilePath = await StatementService.ComposeStatementAsync(userIdFromSession, startDate, endDate);
-            string fileName = $"statement_{startDateStr}_{endDateStr}.pdf";
-            FileStream fs = new FileStream(FilePath, FileMode.Open, FileAccess.Read, FileShare.None, 4096, FileOptions.DeleteOnClose);
-            return File(fs, System.Net.Mime.MediaTypeNames.Application.Octet, fileName);
-        }
-
-        public IActionResult Cancel(int id)
-        {
-            int userIdFromSession = Convert.ToInt32(HttpContext.Session.GetString("sessionUser"));
-            User user = _context.Users.Where(u => u.ID == userIdFromSession).First();
+            User user = SQLTools.GetUserById(userIdFromSession);
             Transaction transaction = TransactionTools.GetTransactionById(id);
             if(transaction.Sender.ID == user.ID)
             {
@@ -156,6 +141,21 @@ namespace CurrencyExchange.Controllers
             return RedirectToAction("Index", new RouteValueDictionary(
                          new { controller = "Transactions", action = "Index", id = userIdFromSession })
                      );
+        }
+
+        [HttpPost]
+        public async Task<FileResult> DownloadStatementAsync(DateTime startDate, DateTime endDate)
+        {
+            int userIdFromSession = Convert.ToInt32(HttpContext.Session.GetString("sessionUser"));
+            endDate = endDate.AddHours(23).AddMinutes(59).AddSeconds(59);
+
+            string startDateStr = StatementTools.GetDateString(startDate);
+            string endDateStr = StatementTools.GetDateString(endDate);
+
+            string FilePath = await StatementService.ComposeStatementAsync(userIdFromSession, startDate, endDate);
+            string fileName = $"statement_{startDateStr}_{endDateStr}.pdf";
+            FileStream fs = new FileStream(FilePath, FileMode.Open, FileAccess.Read, FileShare.None, 4096, FileOptions.DeleteOnClose);
+            return File(fs, System.Net.Mime.MediaTypeNames.Application.Octet, fileName);
         }
 
         private bool TransactionExists(int id)
