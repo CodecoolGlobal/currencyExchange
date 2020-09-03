@@ -18,7 +18,6 @@ namespace CurrencyExchange.Services
             List<Transaction> transactions = await TransactionTools.GetTransactionsAsync(id, year, month);
 
 
-            //PdfDocument template = PdfReader.Open(TemplatePath);
             PdfDocument pdf = PdfReader.Open(TemplatePath, PdfDocumentOpenMode.Modify);
             pdf.Info.Title = "Database to PDF";
             PdfPage pdfPage = new PdfPage(pdf);
