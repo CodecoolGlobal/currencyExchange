@@ -42,5 +42,20 @@ namespace CurrencyExchange.Tools
             }
             return transactions;
         }
+
+        public static Transaction GetTransactionById(int id)
+        {
+            Transaction transaction = new Transaction();
+            using (var context = new CurrencyExchangeContext(
+                    _serviceProvider.GetRequiredService<
+                        DbContextOptions<CurrencyExchangeContext>>()))
+            {
+                transaction = context.Transactions
+                    .Include(t => t.Sender)
+                    .Where(t => t.ID == id)
+                    .First();
+            }
+            return transaction;
+        }
     }
 }
